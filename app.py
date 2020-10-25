@@ -13,7 +13,7 @@ print(os.environ['APP_SETTINGS'])
 def classifier():
 
   req = request.get_json()
-  req = json.loads(req)
+  # req = json.loads(req)
   print(type(req))
   df = json_to_dataframe(req)
   dataset = dataset_preparation(df)
