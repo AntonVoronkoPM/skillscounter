@@ -15,7 +15,7 @@ print(os.environ['APP_SETTINGS'])
 def classifier():
 
   #Config
-  vac = {'database': 'sm-web', 'collection': 'vacancies', 'filter': {'analyzed': False}, 'projection': {'analized': 1}}
+  vac = {'database': 'sm-web', 'collection': 'vacancies', 'filter': {'analyzed': False}, 'projection': {}}
   
   vac_db = MongoAPI(vac)
   new_vacancies = vac_db.read()
