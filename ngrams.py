@@ -4,7 +4,7 @@ from collections import defaultdict
 import unicodedata
 
 def clean_text(skills):
-  skills.text = skills.text.map(lambda x: unicodedata.normalize("NFKD",x))
+  skills.text = skills.text.map(lambda x: unicodedata.normalize("NFKD", x))
   #Select descriptions from requirements
   skills = skills['text']
   skills.replace('--', np.nan, inplace=True)

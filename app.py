@@ -21,6 +21,9 @@ def classifier():
   new_vacancies = vac_db.read()
 
   if len(new_vacancies) == 0:
+  	for i in new_vacancies:
+      data = {'filter': {'_id': i['_id']}, 'updated_data': {'$set': {'analyzed': True}}}
+      res_analyze.append(vac_db.update(data))
     return Response(response=json.dumps({"Warning": "Nothing to analyze"}), 
                     status=200,
                     mimetype='application/json')
