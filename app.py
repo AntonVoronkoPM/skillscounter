@@ -27,11 +27,11 @@ def classifier():
 
   new_vacancies_id = []
 
-  if len(new_vacancies) < 50:
+  if len(new_vacancies) < 10:
     for i in new_vacancies:
   	  new_vacancies_id.append(str(i['_id']))
   else:
-  	for i in range(50):
+  	for i in range(10):
   	  new_vacancies_id.append(str(new_vacancies[i]['_id']))
 
   #Config ?
