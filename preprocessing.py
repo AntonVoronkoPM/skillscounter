@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from pandas.io.json import json_normalize
+from pandas import json_normalize
 from sklearn.feature_extraction.text import TfidfVectorizer
 from scipy.sparse import hstack
 from joblib import load
@@ -31,7 +31,7 @@ def json_to_dataframe(req):
   # works_data['target'] = np.nan
   # works_data.drop_duplicates(subset=['text', 'vacancyId'], inplace=True)
 
-  print(works_data.columns)
+  # print(works_data.columns)
 
   return works_data
 

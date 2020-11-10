@@ -37,7 +37,7 @@ class MongoAPI:
 
 	# def delete(self, data):
 	# 	"""Rework!!!"""
-		
+
 	# 	filt = data['Document']
 	# 	response = self.collection.delete_one(filt)
 	# 	output = {'Status': 'Successfully deleted' if response.deleted_count > 0 else 'Document not found'}

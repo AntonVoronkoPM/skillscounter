@@ -15,13 +15,24 @@ print(os.environ['APP_SETTINGS'])
 def classifier():
 
   #Config
-  vac = {'database': 'sm-web', 'collection': 'vacancies', 'filter': {'analized': False}, 'projection': {}}
+  vac = {'database': 'sm-web', 'collection': 'vacancies', 'filter': {'analized': False}, 'projection': {'analized': 1}}
   
   vac_db = MongoAPI(vac)
   new_vacancies = vac_db.read()
+
+  if len(new_vacancies) == 0:
+    return Response(response=json.dumps({"Warning": "Nothing to analyze"}), 
+                    status=200,
+                    mimetype='application/json')
+
   new_vacancies_id = []
+
+  # if len(new_vacancies) < 50:
   for i in new_vacancies:
   	new_vacancies_id.append(str(i['_id']))
+  # else:
+  # 	for i in range(50):
+  # 	  new_vacancies_id.append(str(new_vacancies[i]['_id']))
 
   #Config ?
   jobstr = {'database': 'sm-web', 'collection': 'jobstrings', 'filter': {'vacancyId': {'$in': new_vacancies_id}}, 'projection': {'tag': 1, 'text': 1, 'target': 1, 'vacancyId': 1}}
@@ -41,13 +52,25 @@ def classifier():
     data = {'filter': {'_id': new_jobstr[i]['_id']}, 'updated_data': {'$set': {'target': new_jobstr[i]['target']}}}
     res.append(jobstr_db.update(data))
 
+
+  res_analyze = []
   if res.count('Nothing was updated') == 0:
     for i in new_vacancies:
       data = {'filter': {'_id': i['_id']}, 'updated_data': {'$set': {'analized': True}}}
-      res = vac_db.update(data)
-      print(res)
+      res_analyze.append(vac_db.update(data))
+  else:
+  	return Response(response=json.dumps({"Warning": "Nothing was updated"}),
+                    status=200,
+                    mimetype='application/json')
 
-  # return jsonify(req)
+  if res_analyze.count('Nothing was updated') == 0:
+  	return Response(response=json.dumps({"Status": "Targets set successfully"}),
+                    status=200,
+                    mimetype='application/json')
+  else:
+  	return Response(response=json.dumps({"Error": "Analyzed status wasn't updated"}),
+                    status=400,
+                    mimetype='application/json')
 
 @app.route('/analyze/<position>', methods=['GET'])
 def analyzer():
