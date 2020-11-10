@@ -56,7 +56,7 @@ def classifier():
   res_analyze = []
   if res.count('Nothing was updated') == 0:
     for i in new_vacancies:
-      data = {'filter': {'_id': i['_id']}, 'updated_data': {'$set': {'analized': True}}}
+      data = {'filter': {'_id': i['_id']}, 'updated_data': {'$set': {'analyzed': True}}}
       res_analyze.append(vac_db.update(data))
   else:
   	return Response(response=json.dumps({"Warning": "Nothing was updated"}),
