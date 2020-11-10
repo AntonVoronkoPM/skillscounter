@@ -27,12 +27,12 @@ def classifier():
 
   new_vacancies_id = []
 
-  # if len(new_vacancies) < 50:
-  for i in new_vacancies:
-  	new_vacancies_id.append(str(i['_id']))
-  # else:
-  # 	for i in range(50):
-  # 	  new_vacancies_id.append(str(new_vacancies[i]['_id']))
+  if len(new_vacancies) < 50:
+    for i in new_vacancies:
+  	  new_vacancies_id.append(str(i['_id']))
+  else:
+  	for i in range(50):
+  	  new_vacancies_id.append(str(new_vacancies[i]['_id']))
 
   #Config ?
   jobstr = {'database': 'sm-web', 'collection': 'jobstrings', 'filter': {'vacancyId': {'$in': new_vacancies_id}}, 'projection': {'tag': 1, 'text': 1, 'target': 1, 'vacancyId': 1}}
