@@ -39,7 +39,7 @@ def classifier():
   jobstr_db = MongoAPI(jobstr)
   new_jobstr = jobstr_db.read()
 
-  new_jobstr = new_jobstr[:4000]
+  new_jobstr = new_jobstr[:1000]
 
   if len(new_jobstr) == 0:
     for i in new_vacancies:
