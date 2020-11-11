@@ -17,15 +17,13 @@ class MongoAPI:
 
 		return output
 
-	# def write(self, data):
-	# 	"""Rework!!!"""
+	def write(self):
+		# log.info('Writing Data')
+		new_document = self.data['documents']
+		response = self.collection.insert_one(new_document)
+		output = {'Status': 'Successfully inserted', 'Document_ID': str(response.inserted_id)}
 
-	# 	log.info('Writing Data')
-	# 	new_document = data['Document']
-	# 	response = self.collection.insert_one(new_document)
-	# 	output = {'Status': 'Successfully inserted', 'Document_ID': str(response.inserted_id)}
-
-	# 	return output
+		return output
 
 	def update(self, data):
 		filt = data['filter']

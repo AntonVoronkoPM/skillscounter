@@ -4,7 +4,7 @@ from preprocessing import json_to_dataframe, dataset_preparation
 from prediction import prediction
 import json
 from models import MongoAPI
-from pprint import pprint
+from ngrams import generate_ngrams
 
 app = Flask(__name__)
 app.config.from_object(os.environ['APP_SETTINGS'])
@@ -21,9 +21,7 @@ def classifier():
   new_vacancies = vac_db.read()
 
   if len(new_vacancies) == 0:
-    return Response(response=json.dumps({"Warning": "Nothing to analyze"}), 
-                    status=200,
-                    mimetype='application/json')
+    return {"Warning": "Nothing to analyze"}
 
   new_vacancies_id = []
 
@@ -41,12 +39,10 @@ def classifier():
   new_jobstr = jobstr_db.read()
 
   if len(new_jobstr) == 0:
-  	for i in new_vacancies:
+    for i in new_vacancies:
       data = {'filter': {'_id': i['_id']}, 'updated_data': {'$set': {'analyzed': True}}}
       vac_db.update(data)
-  	return Response(response=json.dumps({"Status": "Analyzed status was updated"}),
-                    status=200,
-                    mimetype='application/json')
+    return {"Status": "Analyzed status was updated"}
 
   df = json_to_dataframe(new_jobstr)
   dataset = dataset_preparation(df)
@@ -67,22 +63,52 @@ def classifier():
       data = {'filter': {'_id': i['_id']}, 'updated_data': {'$set': {'analyzed': True}}}
       res_analyze.append(vac_db.update(data))
   else:
-  	return Response(response=json.dumps({"Warning": "Nothing was updated"}),
-                    status=200,
-                    mimetype='application/json')
+  	return {"Warning": "Nothing was updated"}
 
   if res_analyze.count('Nothing was updated') == 0:
-  	return Response(response=json.dumps({"Status": "Targets set successfully"}),
-                    status=200,
-                    mimetype='application/json')
+  	return {"Status": "Targets set successfully"}
   else:
-  	return Response(response=json.dumps({"Error": "Analyzed status wasn't updated"}),
-                    status=400,
-                    mimetype='application/json')
+  	return {"Error": "Analyzed status wasn't updated"}
 
 @app.route('/analyze/<position>', methods=['GET'])
-def analyzer():
-  pass
+def analyzer(position):
+  two_words = position.split('_')
+  for i in range(len(two_words)):
+  	two_words[i] = two_words[i].capitalize()
+  position = ' '.join(two_words)
+
+  #Config
+  position_vacancies = {'database': 'sm-web', 'collection': 'vacancies', 'filter': {'position': position}, 'projection': {}}
+  pv_db = MongoAPI(position_vacancies)
+  relevant_postions = pv_db.read()
+  positions_processed = len(relevant_postions)
+  if positions_processed == 0:
+  	return {"Warning": "No vacancies for position"}
+  
+  positions_id = []
+
+  for i in relevant_postions:
+  	positions_id.append(str(i['_id']))
+
+  #Config ?
+  posstr = {'database': 'sm-web', 'collection': 'jobstrings', 'filter': {'vacancyId': {'$in': positions_id}, 'target': 1}, 'projection': {'text': 1, '_id': 0}}
+  
+  posstr_db = MongoAPI(posstr)
+  new_posstr = posstr_db.read()
+
+  if len(new_posstr) == 0:
+  	return {"Warning": "No data for position"}
+
+  #Generate unigram for data analyst
+  data_1gram = generate_ngrams(new_posstr, 1, 40)
+  data_2gram = generate_ngrams(new_posstr, 2, 40)
+  
+  #Config ?
+  ngrams = {'database': 'sm-web', 'collection': 'ngrams', 'documents': {'position': position, 'vacancies_number': positions_processed, 'unigrams': data_1gram, 'digrams': data_2gram}}
+  ngrams_db = MongoAPI(ngrams)
+  post_ngrams = ngrams_db.write()
+
+  return post_ngrams
 
 if __name__ == '__main__':
     app.run()

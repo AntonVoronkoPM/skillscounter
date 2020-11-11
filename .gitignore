@@ -1,2 +1,4 @@
 client/
 env/
+.env
+client.py
