@@ -39,6 +39,8 @@ def classifier():
   jobstr_db = MongoAPI(jobstr)
   new_jobstr = jobstr_db.read()
 
+  new_jobstr = new_jobstr[:50]
+
   if len(new_jobstr) == 0:
     for i in new_vacancies:
       data = {'filter': {'_id': i['_id']}, 'updated_data': {'$set': {'analyzed': True}}}
