@@ -11,7 +11,7 @@ app.config.from_object(os.environ['APP_SETTINGS'])
 
 print(os.environ['APP_SETTINGS'])
 
-@app.route('/predict', methods=['GET'])
+@app.route('/predict', methods=['POST'])
 def classifier():
 
   #Config
