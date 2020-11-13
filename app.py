@@ -34,18 +34,13 @@ def classifier():
 
   #Config ?
   # jobstr = {'database': 'sm-web', 'collection': 'jobstrings', 'filter': {'vacancyId': {'$in': new_vacancies_id}}, 'projection': {'tag': 1, 'text': 1, 'target': 1, 'vacancyId': 1}}
-  while (True):
 
-  	jobstr = {'database': 'sm-web', 'collection': 'jobstrings', 'filter': {'target': None}, 'projection': {'tag': 1, 'text': 1, 'target': 1, 'vacancyId': 1}}
+  jobstr = {'database': 'sm-web', 'collection': 'jobstrings', 'filter': {'target': None}, 'projection': {'tag': 1, 'text': 1, 'target': 1, 'vacancyId': 1}}
   
-  	jobstr_db = MongoAPI(jobstr)
-  	new_jobstr = jobstr_db.read()
+  jobstr_db = MongoAPI(jobstr)
+  new_jobstr = jobstr_db.read()
 
-  #delete
-  	if len(new_jobstr) == 0:
-  		break
-
-  	new_jobstr = new_jobstr[:600]
+  new_jobstr = new_jobstr[:600]
 
   # if len(new_jobstr) == 0:
   #   for i in new_vacancies:
@@ -53,17 +48,17 @@ def classifier():
   #     vac_db.update(data)
   #   return {"Status": "Analyzed status was updated"}
 
-  	df = json_to_dataframe(new_jobstr)
-  	dataset = dataset_preparation(df)
-  	targets = prediction(dataset)
+  df = json_to_dataframe(new_jobstr)
+  dataset = dataset_preparation(df)
+  targets = prediction(dataset)
 
 
-  	res = []
+  res = []
 
-  	for i in range(len(new_jobstr)):
-      new_jobstr[i]['target'] = int(targets[i])
-      data = {'filter': {'_id': new_jobstr[i]['_id']}, 'updated_data': {'$set': {'target': new_jobstr[i]['target']}}}
-      res.append(jobstr_db.update(data))
+  for i in range(len(new_jobstr)):
+    new_jobstr[i]['target'] = int(targets[i])
+    data = {'filter': {'_id': new_jobstr[i]['_id']}, 'updated_data': {'$set': {'target': new_jobstr[i]['target']}}}
+    res.append(jobstr_db.update(data))
 
 
   # res_analyze = []
