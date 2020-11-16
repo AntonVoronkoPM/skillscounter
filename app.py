@@ -5,13 +5,14 @@ from prediction import prediction
 import json
 from models import MongoAPI
 from ngrams import generate_ngrams
+from datetime import datetime
 
 app = Flask(__name__)
 app.config.from_object(os.environ['APP_SETTINGS'])
 
 print(os.environ['APP_SETTINGS'])
 
-@app.route('/predict', methods=['POST'])
+@app.route('/predict', methods=['GET'])
 def classifier():
 
   #Config
@@ -40,7 +41,7 @@ def classifier():
   jobstr_db = MongoAPI(jobstr)
   new_jobstr = jobstr_db.read()
 
-  new_jobstr = new_jobstr[:600]
+  # new_jobstr = new_jobstr[:600]
 
   # if len(new_jobstr) == 0:
   #   for i in new_vacancies:
@@ -76,14 +77,17 @@ def classifier():
 
   return {'Status': 'Done'}
 
-@app.route('/analyze/<position>', methods=['GET'])
-def analyzer(position):
-  two_words = position.split('_')
-  for i in range(len(two_words)):
-  	two_words[i] = two_words[i].capitalize()
-  position = ' '.join(two_words)
+@app.route('/analyze/<position_id>', methods=['GET'])
+def analyzer(position_id):
 
   #Config
+  position_title = {'database': 'sm-web', 'collection': 'positions', 'filter': {}, 'projection': {'positions': 1}}
+  pt_db = MongoAPI(position_title)
+  relevant_title = pt_db.read()[0]['positions'][int(position_id)]
+  if relevant_title == 0:
+  	return {"Warning": "No such a position"}
+
+  position = relevant_title['title']
   position_vacancies = {'database': 'sm-web', 'collection': 'vacancies', 'filter': {'position': position}, 'projection': {}}
   pv_db = MongoAPI(position_vacancies)
   relevant_postions = pv_db.read()
@@ -110,7 +114,7 @@ def analyzer(position):
   data_2gram = generate_ngrams(new_posstr, 2, 40)
   
   #Config ?
-  ngrams = {'database': 'sm-web', 'collection': 'ngrams', 'documents': {'position': position, 'vacancies_number': positions_processed, 'unigrams': data_1gram, 'digrams': data_2gram}}
+  ngrams = {'database': 'sm-web', 'collection': 'ngrams', 'documents': {'position': position, 'vacancies_number': positions_processed, 'unigrams': data_1gram, 'digrams': data_2gram, 'createdAt': datetime.now()}}
   ngrams_db = MongoAPI(ngrams)
   post_ngrams = ngrams_db.write()
 
