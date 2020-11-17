@@ -1,9 +1,19 @@
 import re
 from collections import defaultdict
 import unicodedata
-from stopwords import stopwords_unigrams, stopwords_digrams
 import numpy as np
 import pandas as pd
+from wordcloud import STOPWORDS
+from models import MongoAPI
+
+stopwords = set(STOPWORDS)
+
+stopwords_req = {'database': 'sm-web', 'collection': 'stopwords', 'filter': {}, 'projection': {'unigrams': 1, 'digrams': 1, '_id': 0}}
+stopwords_db = MongoAPI(stopwords_req)
+all_stopwords = stopwords_db.read()[0]
+
+stopwords_unigrams = stopwords.union(set(all_stopwords['unigrams']))
+stopwords_digrams = stopwords.union(set(all_stopwords['digrams']))
 
 def clean_text(skills):
   skills = pd.DataFrame(skills)
@@ -38,7 +48,7 @@ def generate_ngrams(df, n_gram, max_row):
   if n_gram == 1:
     stopwords = stopwords_unigrams
   elif n_gram == 2:
-    stopwords = stopwords_unigrams
+    stopwords = stopwords_digrams
   for question in df:
     for word in ngram_extractor(question, n_gram, stopwords):
       temp_dict[word] += 1
