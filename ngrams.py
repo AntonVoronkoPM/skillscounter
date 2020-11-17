@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 from wordcloud import STOPWORDS
 from models import MongoAPI
+from datetime import datetime
 
 stopwords = set(STOPWORDS)
 
