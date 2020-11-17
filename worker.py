@@ -14,5 +14,6 @@ redis_conn = redis.Redis(
 
 if __name__ == '__main__':
     with Connection(redis_conn):
+        print('connection')
         worker = Worker(list(map(Queue, listen)))
         worker.work()
