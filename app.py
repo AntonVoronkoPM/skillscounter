@@ -4,11 +4,16 @@ from preprocessing import json_to_dataframe, dataset_preparation
 from prediction import prediction
 import json
 from models import MongoAPI
-from ngrams import generate_ngrams
+from ngrams import ngram
 from datetime import datetime
+from worker import redis_conn
+from rq.job import Job
+from rq import Queue
 
 app = Flask(__name__)
 app.config.from_object(os.environ['APP_SETTINGS'])
+
+q = Queue(connection=redis_conn)
 
 print(os.environ['APP_SETTINGS'])
 
@@ -79,46 +84,17 @@ def classifier():
 
 @app.route('/analyze/<position_id>', methods=['GET'])
 def analyzer(position_id):
+  job = q.enqueue(ngram, position_id)
+  return {'job_id': job.get_id()} 
 
-  #Config
-  position_title = {'database': 'sm-web', 'collection': 'positions', 'filter': {}, 'projection': {'positions': 1}}
-  pt_db = MongoAPI(position_title)
-  relevant_title = pt_db.read()[0]['positions'][int(position_id)]
-  if relevant_title == 0:
-  	return {"Warning": "No such a position"}
+@app.route('/result/<job_key>', methods=['GET'])
+def get_results(job_key):
+  job = Job.fetch(job_key, connection=redis_conn)
 
-  position = relevant_title['title']
-  position_vacancies = {'database': 'sm-web', 'collection': 'vacancies', 'filter': {'position': position}, 'projection': {}}
-  pv_db = MongoAPI(position_vacancies)
-  relevant_postions = pv_db.read()
-  positions_processed = len(relevant_postions)
-  if positions_processed == 0:
-  	return {"Warning": "No vacancies for position"}
-  
-  positions_id = []
-
-  for i in relevant_postions:
-  	positions_id.append(str(i['_id']))
-
-  #Config ?
-  posstr = {'database': 'sm-web', 'collection': 'jobstrings', 'filter': {'vacancyId': {'$in': positions_id}, 'target': 1}, 'projection': {'text': 1, '_id': 0}}
-  
-  posstr_db = MongoAPI(posstr)
-  new_posstr = posstr_db.read()
-
-  if len(new_posstr) == 0:
-  	return {"Warning": "No data for position"}
-
-  #Generate unigram for data analyst
-  data_1gram = generate_ngrams(new_posstr, 1, 40)
-  data_2gram = generate_ngrams(new_posstr, 2, 40)
-  
-  #Config ?
-  ngrams = {'database': 'sm-web', 'collection': 'ngrams', 'documents': {'position': position, 'vacancies_number': positions_processed, 'unigrams': data_1gram, 'digrams': data_2gram, 'createdAt': datetime.now()}}
-  ngrams_db = MongoAPI(ngrams)
-  post_ngrams = ngrams_db.write()
-
-  return post_ngrams
+  if job.is_finished:
+  	return str(job.result)
+  else:
+  	return {'Status': job.get_status()}
 
 if __name__ == '__main__':
     app.run()

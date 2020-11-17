@@ -55,3 +55,47 @@ def generate_ngrams(df, n_gram, max_row):
   temp_df = pd.DataFrame(sorted(temp_dict.items(), key=lambda x: x[1])[::-1]).head(max_row)
   temp_df.columns = ["word", "wordcount"]
   return temp_df.to_dict('records')
+
+
+def ngram(position_id):
+  print('ngrams started')
+
+  #Config
+  position_title = {'database': 'sm-web', 'collection': 'positions', 'filter': {}, 'projection': {'positions': 1}}
+  pt_db = MongoAPI(position_title)
+  relevant_title = pt_db.read()[0]['positions'][int(position_id)]
+  if relevant_title == 0:
+    return {"Warning": "No such a position"}
+
+  position = relevant_title['title']
+  position_vacancies = {'database': 'sm-web', 'collection': 'vacancies', 'filter': {'position': position}, 'projection': {}}
+  pv_db = MongoAPI(position_vacancies)
+  relevant_postions = pv_db.read()
+  positions_processed = len(relevant_postions)
+  if positions_processed == 0:
+    return {"Warning": "No vacancies for position"}
+  
+  positions_id = []
+
+  for i in relevant_postions:
+    positions_id.append(str(i['_id']))
+
+  #Config ?
+  posstr = {'database': 'sm-web', 'collection': 'jobstrings', 'filter': {'vacancyId': {'$in': positions_id}, 'target': 1}, 'projection': {'text': 1, '_id': 0}}
+  
+  posstr_db = MongoAPI(posstr)
+  new_posstr = posstr_db.read()
+
+  if len(new_posstr) == 0:
+    return {"Warning": "No data for position"}
+
+  #Generate unigram for data analyst
+  data_1gram = generate_ngrams(new_posstr, 1, 40)
+  data_2gram = generate_ngrams(new_posstr, 2, 40)
+  
+  #Config ?
+  ngrams = {'database': 'sm-web', 'collection': 'ngrams', 'documents': {'position': position, 'vacancies_number': positions_processed, 'unigrams': data_1gram, 'digrams': data_2gram, 'createdAt': datetime.now()}}
+  ngrams_db = MongoAPI(ngrams)
+  post_ngrams = ngrams_db.write()
+
+  return post_ngrams
