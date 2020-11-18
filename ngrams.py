@@ -37,11 +37,11 @@ def clean_text(skills):
   skills_na_cleaned = [re.sub(r"[-()\"#/@;:<>{}`+=~|.!?,]", "", item) for item in skills_na_cleaned]
   print('special symbols removed')
   #convert to dataframe
-  skills_na_cleaned = pd.DataFrame(np.array(skills_na_cleaned).reshape(-1))
-  print('dataframe reshaped')
+  # skills_na_cleaned = pd.DataFrame(np.array(skills_na_cleaned).reshape(-1))
+  # print('dataframe reshaped')
   #Squeeze dataframe to obtain series
-  data_cleaned = skills_na_cleaned.squeeze()
-  return data_cleaned
+  # data_cleaned = skills_na_cleaned.squeeze()
+  return skills_na_cleaned
 
 #ngram function
 def ngram_extractor(text, n_gram, stopwords):
