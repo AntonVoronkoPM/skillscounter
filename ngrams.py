@@ -57,7 +57,7 @@ def generate_ngrams(df, n_gram, max_row):
   temp_df.columns = ["word", "wordcount"]
   return temp_df.to_dict('records')
 
-
+#function for calling ngram functionality from api
 def ngram(position_id):
   print('ngrams started')
 
