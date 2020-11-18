@@ -12,6 +12,7 @@ def prediction(X):
 
   return y
 
+#function for calling prediction functionality from api
 def classifier():
   # Config
   vac = {'database': 'sm-web', 'collection': 'vacancies', 'filter': {'analyzed': False}, 'projection': {}}

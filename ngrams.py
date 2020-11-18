@@ -76,7 +76,7 @@ def ngram(position_id):
   position_title = {'database': 'sm-web', 'collection': 'positions', 'filter': {}, 'projection': {'positions': 1}}
   pt_db = MongoAPI(position_title)
   relevant_title = pt_db.read()[0]['positions'][int(position_id)]
-  if relevant_title == 0:
+  if len(relevant_title) == 0:
     return {"Warning": "No such a position"}
 
   print('title received')
@@ -91,13 +91,13 @@ def ngram(position_id):
   
   print('positions received')
 
-  positions_id = []
+  vacancies_id = []
 
   for i in relevant_postions:
-    positions_id.append(str(i['_id']))
+    vacancies_id.append(str(i['_id']))
 
   #Config ?
-  posstr = {'database': 'sm-web', 'collection': 'jobstrings', 'filter': {'vacancyId': {'$in': positions_id}, 'target': 1}, 'projection': {'text': 1, '_id': 0}}
+  posstr = {'database': 'sm-web', 'collection': 'jobstrings', 'filter': {'vacancyId': {'$in': vacancies_id}, 'target': 1}, 'projection': {'text': 1, '_id': 0}}
   
   posstr_db = MongoAPI(posstr)
   new_posstr = posstr_db.read()
@@ -114,7 +114,7 @@ def ngram(position_id):
   print('ngrams generated')
 
   #Config ?
-  ngrams = {'database': 'sm-web', 'collection': 'ngrams', 'documents': {'position': position, 'vacancies_number': positions_processed, 'unigrams': data_1gram, 'digrams': data_2gram, 'createdAt': datetime.now()}}
+  ngrams = {'database': 'sm-web', 'collection': 'ngrams', 'documents': {'position': position, 'positionId': position_id, 'vacancies_number': positions_processed, 'unigrams': data_1gram, 'digrams': data_2gram, 'createdAt': datetime.now()}}
   ngrams_db = MongoAPI(ngrams)
   post_ngrams = ngrams_db.write()
 
