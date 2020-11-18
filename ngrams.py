@@ -44,15 +44,19 @@ def ngram_extractor(text, n_gram, stopwords):
 
 # Function to generate a dataframe with n_gram and top max_row frequencies
 def generate_ngrams(df, n_gram, max_row):
+  print('generation entered')
   df = clean_text(df)
+  print('text cleaned up')
   temp_dict = defaultdict(int)
   if n_gram == 1:
     stopwords = stopwords_unigrams
   elif n_gram == 2:
     stopwords = stopwords_digrams
   for question in df:
+    print('extraction entered')
     for word in ngram_extractor(question, n_gram, stopwords):
       temp_dict[word] += 1
+  print('extraction finished')
   temp_df = pd.DataFrame(sorted(temp_dict.items(), key=lambda x: x[1])[::-1]).head(max_row)
   temp_df.columns = ["word", "wordcount"]
   return temp_df.to_dict('records')
