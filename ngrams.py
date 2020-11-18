@@ -68,6 +68,8 @@ def ngram(position_id):
   if relevant_title == 0:
     return {"Warning": "No such a position"}
 
+  print('title received')
+
   position = relevant_title['title']
   position_vacancies = {'database': 'sm-web', 'collection': 'vacancies', 'filter': {'position': position}, 'projection': {}}
   pv_db = MongoAPI(position_vacancies)
@@ -76,6 +78,8 @@ def ngram(position_id):
   if positions_processed == 0:
     return {"Warning": "No vacancies for position"}
   
+  print('positions received')
+
   positions_id = []
 
   for i in relevant_postions:
@@ -89,11 +93,15 @@ def ngram(position_id):
 
   if len(new_posstr) == 0:
     return {"Warning": "No data for position"}
+  
+  print('jobstrings received')
 
   #Generate unigram for data analyst
   data_1gram = generate_ngrams(new_posstr, 1, 40)
   data_2gram = generate_ngrams(new_posstr, 2, 40)
   
+  print('ngrams generated')
+
   #Config ?
   ngrams = {'database': 'sm-web', 'collection': 'ngrams', 'documents': {'position': position, 'vacancies_number': positions_processed, 'unigrams': data_1gram, 'digrams': data_2gram, 'createdAt': datetime.now()}}
   ngrams_db = MongoAPI(ngrams)
