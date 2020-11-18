@@ -1,5 +1,6 @@
 from joblib import load
 from preprocessing import json_to_dataframe, dataset_preparation
+from models import MongoAPI
 
 def prediction(X):
 

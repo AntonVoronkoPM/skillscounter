@@ -1,8 +1,6 @@
 import os
-from flask import Flask, jsonify, request
+from flask import Flask
 from prediction import classifier
-import json
-from models import MongoAPI
 from ngrams import ngram
 from datetime import datetime
 from worker import redis_conn
