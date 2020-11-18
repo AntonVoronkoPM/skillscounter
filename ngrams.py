@@ -17,21 +17,28 @@ stopwords_unigrams = stopwords.union(set(all_stopwords['unigrams']))
 stopwords_digrams = stopwords.union(set(all_stopwords['digrams']))
 
 def clean_text(skills):
+  print('text cleaning entered')
   skills = pd.DataFrame(skills)
   #Normalize text
   skills.text = skills.text.map(lambda x: unicodedata.normalize("NFKD", x))
+  print('normalization finished')
   #Select text only
   skills = skills['text']
   skills.replace('--', np.nan, inplace=True)
   skills_na = skills.dropna()
+  print('emptyness reduced')
   #convert list elements to lower case
   skills_na_cleaned = [item.lower() for item in skills_na]
+  print('lowercase done')
   #remove html links from list 
   skills_na_cleaned =  [re.sub(r"http\S+", "", item) for item in skills_na_cleaned]
+  print('web artifacts removed')
   #remove special characters left
   skills_na_cleaned = [re.sub(r"[-()\"#/@;:<>{}`+=~|.!?,]", "", item) for item in skills_na_cleaned]
+  print('special symbols removed')
   #convert to dataframe
   skills_na_cleaned = pd.DataFrame(np.array(skills_na_cleaned).reshape(-1))
+  print('dataframe reshaped')
   #Squeeze dataframe to obtain series
   data_cleaned = skills_na_cleaned.squeeze()
   return data_cleaned
