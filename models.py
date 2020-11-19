@@ -26,6 +26,8 @@ class MongoAPI:
 		return output
 
 	def update(self, data, upsert=False):
+		print(upsert)
+		print(type(upsert))
 		filt = data['filter']
 		updated_data = data['updated_data']
 		response = self.collection.update_one(filt, updated_data, {'upsert': upsert})
