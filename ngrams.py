@@ -60,7 +60,7 @@ def generate_ngrams(df, n_gram, max_row):
   elif n_gram == 2:
     stopwords = stopwords_digrams
   for question in df:
-    print('extraction entered')
+    # print('extraction entered')
     for word in ngram_extractor(question, n_gram, stopwords):
       temp_dict[word] += 1
   print('extraction finished')
