@@ -25,10 +25,10 @@ class MongoAPI:
 
 		return output
 
-	def update(self, data):
+	def update(self, data, upsert=False):
 		filt = data['filter']
 		updated_data = data['updated_data']
-		response = self.collection.update_one(filt, updated_data)
+		response = self.collection.update_one(filt, updated_data, {'upsert': upsert})
 		output = {'Status': 'Successfully updated' if response.modified_count > 0 else 'Nothing was updated'}
 
 		return output

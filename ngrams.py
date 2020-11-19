@@ -117,7 +117,7 @@ def ngram(position_id):
   # ngrams = {'database': 'sm-web', 'collection': 'ngrams', 'documents': {'position': position, 'positionId': position_id, 'vacancies_number': positions_processed, 'unigrams': data_1gram, 'digrams': data_2gram, 'createdAt': datetime.now()}}
   ngrams_conn = {'database': 'sm-web', 'collection': 'ngrams'}
   ngrams_db = MongoAPI(ngrams_conn)
-  ngrams_data = {'filter': {'position': position}, 'updated_data': {'$set': {'vacancies_number': positions_processed, 'unigrams': data_1gram, 'digrams': data_2gram, 'updatedAt': datetime.now()}, '$setOnInsert': {'position': position, 'positionId': position_id, 'createdAt': datetime.now()}}}
-  post_ngrams = ngrams_db.update(ngrams_data)
+  ngrams_data = {'filter': {'position': position}, 'updated_data': {'$set': {'vacancies_number': positions_processed, 'unigrams': data_1gram, 'digrams': data_2gram, 'updatedAt': datetime.now()}, '$setOnInsert': {'position': position, 'positionId': position_id, 'createdAt': datetime.now()}}, 'upsert': True}
+  post_ngrams = ngrams_db.update(ngrams_data, upsert=True)
 
   return post_ngrams
