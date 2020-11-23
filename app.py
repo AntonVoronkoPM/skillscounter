@@ -1,5 +1,6 @@
 import os
 from flask import Flask
+from flask_cors import CORS
 from prediction import classifier
 from ngrams import ngram
 from datetime import datetime
@@ -8,7 +9,7 @@ from rq.job import Job
 from rq import Queue
 
 app = Flask(__name__)
-cors = CORS(app, resources={r'/*': {'origins': '*'}})
+cors = CORS(app, resources=r'/*')
 app.config.from_object(os.environ['APP_SETTINGS'])
 
 q = Queue(connection=redis_conn)
