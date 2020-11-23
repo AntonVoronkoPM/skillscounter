@@ -22,6 +22,7 @@ def prediction():
 
 @app.route('/analyze/<position_id>', methods=['GET'])
 def analyzer(position_id):
+  print('analyze')
   job = q.enqueue(ngram, position_id)
   return {'job_id': job.get_id()} 
 
