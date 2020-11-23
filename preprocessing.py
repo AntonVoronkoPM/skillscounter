@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 from pandas import json_normalize
 from sklearn.feature_extraction.text import TfidfVectorizer
 from scipy.sparse import hstack

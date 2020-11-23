@@ -8,6 +8,7 @@ from rq.job import Job
 from rq import Queue
 
 app = Flask(__name__)
+cors = CORS(app, resources={r'/*': {'origins': '*'}})
 app.config.from_object(os.environ['APP_SETTINGS'])
 
 q = Queue(connection=redis_conn)

@@ -4,6 +4,7 @@ import unicodedata
 import numpy as np
 import pandas as pd
 from wordcloud import STOPWORDS
+# import spacy
 from models import MongoAPI
 from datetime import datetime
 
@@ -70,7 +71,6 @@ def generate_ngrams(df, n_gram, max_row):
 
 #function for calling ngram functionality from api
 def ngram(position_id):
-  print('ngrams started')
 
   #Config
   position_title = {'database': 'sm-web', 'collection': 'positions', 'filter': {}, 'projection': {'positions': 1}}
@@ -79,7 +79,6 @@ def ngram(position_id):
   if len(relevant_title) == 0:
     return {"Warning": "No such a position"}
 
-  print('title received')
 
   position = relevant_title['title']
   position_vacancies = {'database': 'sm-web', 'collection': 'vacancies', 'filter': {'position': position}, 'projection': {}}
@@ -88,8 +87,6 @@ def ngram(position_id):
   positions_processed = len(relevant_postions)
   if positions_processed == 0:
     return {"Warning": "No vacancies for position"}
-  
-  print('positions received')
 
   vacancies_id = []
 
@@ -121,3 +118,62 @@ def ngram(position_id):
   post_ngrams = ngrams_db.update(ngrams_data, upsert=True)
 
   return post_ngrams
+
+
+
+
+# from spacy.lang.en.stop_words import STOP_WORDS 
+# from collections import Counter
+
+# nlp = spacy.load("en_core_web_sm")
+# nlp.max_length = 3000000
+
+# #Config
+# position_title = {'database': 'sm-web', 'collection': 'positions', 'filter': {}, 'projection': {'positions': 1}}
+# pt_db = MongoAPI(position_title)
+# relevant_title = pt_db.read()[0]['positions'][0]
+
+# position = relevant_title['title']
+# position_vacancies = {'database': 'sm-web', 'collection': 'vacancies', 'filter': {'position': position}, 'projection': {}}
+# pv_db = MongoAPI(position_vacancies)
+# relevant_postions = pv_db.read()
+# positions_processed = len(relevant_postions)
+
+# vacancies_id = []
+
+# for i in relevant_postions:
+#   vacancies_id.append(str(i['_id']))
+
+# #Config ?
+# posstr = {'database': 'sm-web', 'collection': 'jobstrings', 'filter': {'vacancyId': {'$in': vacancies_id}, 'target': 1}, 'projection': {'text': 1, '_id': 0}}
+  
+# posstr_db = MongoAPI(posstr)
+# new_posstr = posstr_db.read()
+
+# # print(new_posstr[17])
+
+# corpus = [nlp(pos['text']) for pos in new_posstr]
+# corpus_proc = [i for i in corpus if not i.is_stop and not i.is_punct]
+
+# print(len(corpus))
+# print(len(corpus_proc))
+# # text = corpus[len(corpus)-7]
+# # text = ' '.join(corpus)
+
+# STOP_WORDS.update(all_stopwords['unigrams'])
+# STOP_WORDS.update(all_stopwords['digrams'])
+
+# # doc = nlp(text)
+# # sentences = list(doc.sents)
+# # print(doc[0].lemma_)
+# # doc_proc = [i for i in doc if not i.is_stop and not i.is_punct]
+# # print(len(doc))
+# # print(len(doc_proc))
+# # print(doc_proc)
+
+# # word_freq = Counter(doc_proc)
+# # common = word_freq.most_common(20)
+# # print(common)
+
+# print(corpus)
+# print(corpus_proc)
