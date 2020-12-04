@@ -1,21 +1,23 @@
 import re
-from collections import defaultdict
+import string
+from collections import Counter
 import unicodedata
 import numpy as np
 import pandas as pd
-from wordcloud import STOPWORDS
-# import spacy
 from models import MongoAPI
 from datetime import datetime
+import nltk
+from nltk.util import ngrams
+from nltk import word_tokenize
+from nltk.stem import SnowballStemmer
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('wordnet')
 
-stopwords = set(STOPWORDS)
-
+#Retrieving stopwords from database
 stopwords_req = {'database': 'sm-web', 'collection': 'stopwords', 'filter': {}, 'projection': {'unigrams': 1, 'digrams': 1, '_id': 0}}
 stopwords_db = MongoAPI(stopwords_req)
 all_stopwords = stopwords_db.read()[0]
-
-stopwords_unigrams = stopwords.union(set(all_stopwords['unigrams']))
-stopwords_digrams = stopwords.union(set(all_stopwords['digrams']))
 
 def clean_text(skills):
   print('text cleaning entered')
@@ -44,30 +46,45 @@ def clean_text(skills):
   # data_cleaned = skills_na_cleaned.squeeze()
   return skills_na_cleaned
 
+def token_extractor(text, n_gram):
+  nltk_stopwords = nltk.corpus.stopwords.words('english')
+  nltk_stopwords = set(nltk_stopwords)
+  if n_gram == 1:
+    nltk_stopwords.update(all_stopwords['unigrams'])
+  elif n_gram == 2:
+    nltk_stopwords.update(all_stopwords['digrams'])
+  stemmer = SnowballStemmer('english')
+  corpus_nltk = [word_tokenize(pos['text']) for pos in text]
+  corpus_clean_nltk = [[],[]]
+  for j in corpus_nltk:
+    for i in j:
+      if i not in nltk_stopwords and i not in string.punctuation:
+        stem = stemmer.stem(i)
+        corpus_clean_nltk[0].append(i)
+        corpus_clean_nltk[1].append(stem)
+  return corpus_clean_nltk
+
 #ngram function
-def ngram_extractor(text, n_gram, stopwords):
-  token = [token for token in text.lower().split(" ") if token != "" if token not in stopwords]
-  ngrams = zip(*[token[i:] for i in range(n_gram)])
-  return [" ".join(ngram) for ngram in ngrams]
+def digram_extractor(tokens):
+  digrams_i = ngrams(tokens[0], 2)
+  digrams_stem = ngrams(tokens[1], 2)
+  di_i = list(digrams_i)
+  di_stem = list(digrams_stem)
+  return [di_i, di_stem]
 
 # Function to generate a dataframe with n_gram and top max_row frequencies
 def generate_ngrams(df, n_gram, max_row):
   print('generation entered')
   df = clean_text(df)
   print('text cleaned up')
-  temp_dict = defaultdict(int)
-  if n_gram == 1:
-    stopwords = stopwords_unigrams
-  elif n_gram == 2:
-    stopwords = stopwords_digrams
-  for question in df:
-    # print('extraction entered')
-    for word in ngram_extractor(question, n_gram, stopwords):
-      temp_dict[word] += 1
-  print('extraction finished')
-  temp_df = pd.DataFrame(sorted(temp_dict.items(), key=lambda x: x[1])[::-1]).head(max_row)
-  temp_df.columns = ["word", "wordcount"]
-  return temp_df.to_dict('records')
+  tokens = token_extractor(df, n_gram)
+  if n_gram == 2:
+    tokens = digram_extractor(tokens)
+  freq = Counter(tokens[1])
+  top_freq = []
+  for i in range(max_row):
+    top_freq.append([tokens[0][tokens[1].index(list(freq.most_common(max_row))[i][0])], freq.most_common(max_row)[i][1]])
+  return top_freq
 
 #function for calling ngram functionality from api
 def ngram(position_id):
@@ -104,7 +121,7 @@ def ngram(position_id):
   
   print('jobstrings received')
 
-  #Generate unigram for data analyst
+  #Generate ngram
   data_1gram = generate_ngrams(new_posstr, 1, 40)
   data_2gram = generate_ngrams(new_posstr, 2, 40)
   
@@ -118,62 +135,3 @@ def ngram(position_id):
   post_ngrams = ngrams_db.update(ngrams_data, upsert=True)
 
   return post_ngrams
-
-
-
-
-# from spacy.lang.en.stop_words import STOP_WORDS 
-# from collections import Counter
-
-# nlp = spacy.load("en_core_web_sm")
-# nlp.max_length = 3000000
-
-# #Config
-# position_title = {'database': 'sm-web', 'collection': 'positions', 'filter': {}, 'projection': {'positions': 1}}
-# pt_db = MongoAPI(position_title)
-# relevant_title = pt_db.read()[0]['positions'][0]
-
-# position = relevant_title['title']
-# position_vacancies = {'database': 'sm-web', 'collection': 'vacancies', 'filter': {'position': position}, 'projection': {}}
-# pv_db = MongoAPI(position_vacancies)
-# relevant_postions = pv_db.read()
-# positions_processed = len(relevant_postions)
-
-# vacancies_id = []
-
-# for i in relevant_postions:
-#   vacancies_id.append(str(i['_id']))
-
-# #Config ?
-# posstr = {'database': 'sm-web', 'collection': 'jobstrings', 'filter': {'vacancyId': {'$in': vacancies_id}, 'target': 1}, 'projection': {'text': 1, '_id': 0}}
-  
-# posstr_db = MongoAPI(posstr)
-# new_posstr = posstr_db.read()
-
-# # print(new_posstr[17])
-
-# corpus = [nlp(pos['text']) for pos in new_posstr]
-# corpus_proc = [i for i in corpus if not i.is_stop and not i.is_punct]
-
-# print(len(corpus))
-# print(len(corpus_proc))
-# # text = corpus[len(corpus)-7]
-# # text = ' '.join(corpus)
-
-# STOP_WORDS.update(all_stopwords['unigrams'])
-# STOP_WORDS.update(all_stopwords['digrams'])
-
-# # doc = nlp(text)
-# # sentences = list(doc.sents)
-# # print(doc[0].lemma_)
-# # doc_proc = [i for i in doc if not i.is_stop and not i.is_punct]
-# # print(len(doc))
-# # print(len(doc_proc))
-# # print(doc_proc)
-
-# # word_freq = Counter(doc_proc)
-# # common = word_freq.most_common(20)
-# # print(common)
-
-# print(corpus)
-# print(corpus_proc)
