@@ -89,6 +89,7 @@ def generate_ngrams(df, n_gram, max_row):
 #function for calling ngram functionality from api
 def ngram(position_id):
   print('starting ngram functionality')
+  print('position id', position_id)
 
   #Config
   position_title = {'database': 'sm-web', 'collection': 'positions', 'filter': {}, 'projection': {'positions': 1}}
