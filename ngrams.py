@@ -49,7 +49,7 @@ def clean_text(skills):
   return skills_na_cleaned
 
 def token_extractor(text, n_gram):
-  print(text)
+  # print(text)
   nltk_stopwords = nltk.corpus.stopwords.words('english')
   nltk_stopwords = set(nltk_stopwords)
   if n_gram == 1:
