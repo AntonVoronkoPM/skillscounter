@@ -10,9 +10,11 @@ import nltk
 from nltk.util import ngrams
 from nltk import word_tokenize
 from nltk.stem import SnowballStemmer
-nltk.download('punkt')
-nltk.download('stopwords')
-nltk.download('wordnet')
+# nltk.download('punkt')
+# nltk.download('stopwords')
+# nltk.download('wordnet')
+
+nltk.data.path.append('./nltk_data')
 
 #Retrieving stopwords from database
 stopwords_req = {'database': 'sm-web', 'collection': 'stopwords', 'filter': {}, 'projection': {'unigrams': 1, 'digrams': 1, '_id': 0}}
