@@ -47,6 +47,7 @@ def clean_text(skills):
   return skills_na_cleaned
 
 def token_extractor(text, n_gram):
+  print(text)
   nltk_stopwords = nltk.corpus.stopwords.words('english')
   nltk_stopwords = set(nltk_stopwords)
   if n_gram == 1:
@@ -54,7 +55,7 @@ def token_extractor(text, n_gram):
   elif n_gram == 2:
     nltk_stopwords.update(all_stopwords['digrams'])
   stemmer = SnowballStemmer('english')
-  corpus_nltk = [word_tokenize(pos['text']) for pos in text]
+  corpus_nltk = [word_tokenize(pos) for pos in text]
   corpus_clean_nltk = [[],[]]
   for j in corpus_nltk:
     for i in j:
@@ -83,7 +84,7 @@ def generate_ngrams(df, n_gram, max_row):
   freq = Counter(tokens[1])
   top_freq = []
   for i in range(max_row):
-    top_freq.append([tokens[0][tokens[1].index(list(freq.most_common(max_row))[i][0])], freq.most_common(max_row)[i][1]])
+    top_freq.append({'word': tokens[0][tokens[1].index(list(freq.most_common(max_row))[i][0])], 'wordcount': freq.most_common(max_row)[i][1]})
   return top_freq
 
 #function for calling ngram functionality from api

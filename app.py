@@ -26,6 +26,7 @@ def analyzer(position_id):
   print('analyze')
   job = q.enqueue(ngram, position_id)
   return {'job_id': job.get_id()} 
+  # return ngram(position_id)
 
 @app.route('/result/<job_key>', methods=['GET'])
 def get_results(job_key):
