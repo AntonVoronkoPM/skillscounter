@@ -81,7 +81,6 @@ def digram_extractor(tokens):
     print('check digrams')
     if (di_i[i][0][1] == di_i[i][1][1] and (di_i[i][0][1] == 'JJ' or di_i[i][0][1] == 'VB')) or (di_i[i][0][1]) == 'POS' or (di_i[i][1][1]) == 'POS':
       continue
-    print(di_i[i])
     di_i_adj.append(di_i[i])
     di_stem_adj.append(di_stem[i])
   return [di_i_adj, di_stem_adj]
@@ -98,7 +97,6 @@ def generate_ngrams(df, n_gram, max_row):
     print('digrams')
     tokens = digram_extractor(tokens)
   freq = FreqDist(tokens[1]).most_common(max_row)
-  print(freq)
   if n_gram == 2:
     for i in range(len(tokens[0])):
       tokens[0][i] = [(tokens[0][i][0][0] + ' ' + tokens[0][i][1][0])]
