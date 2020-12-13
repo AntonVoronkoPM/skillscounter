@@ -1,15 +1,16 @@
 import re
 import string
-from collections import Counter
+# from collections import Counter
 import unicodedata
 import numpy as np
 import pandas as pd
 from models import MongoAPI
 from datetime import datetime
 import nltk
+from nltk import word_tokenize, pos_tag
 from nltk.util import ngrams
-from nltk import word_tokenize
 from nltk.stem import SnowballStemmer
+from nltk.probability import FreqDist
 # nltk.download('punkt')
 # nltk.download('stopwords')
 # nltk.download('wordnet')
@@ -57,12 +58,12 @@ def token_extractor(text, n_gram):
   elif n_gram == 2:
     nltk_stopwords.update(all_stopwords['digrams'])
   stemmer = SnowballStemmer('english')
-  corpus_nltk = [word_tokenize(pos) for pos in text]
+  corpus_nltk = [pos_tag(word_tokenize(pos)) for pos in text]
   corpus_clean_nltk = [[],[]]
   for j in corpus_nltk:
     for i in j:
-      if i not in nltk_stopwords and i not in string.punctuation:
-        stem = stemmer.stem(i)
+      if i[0] not in nltk_stopwords and i[0] not in string.punctuation:
+        stem = stemmer.stem(i[0])
         corpus_clean_nltk[0].append(i)
         corpus_clean_nltk[1].append(stem)
   return corpus_clean_nltk
@@ -73,20 +74,36 @@ def digram_extractor(tokens):
   digrams_stem = ngrams(tokens[1], 2)
   di_i = list(digrams_i)
   di_stem = list(digrams_stem)
-  return [di_i, di_stem]
+  di_i_adj = []
+  di_stem_adj = []
+  for i in range(len(di_i)):
+    print('check digrams')
+    if (di_i[i][0][1] == di_i[i][1][1] and (di_i[i][0][1] == 'JJ' or di_i[i][0][1] == 'VB')) or (di_i[i][0][1]) == 'POS' or (di_i[i][1][1]) == 'POS':
+      continue
+    print(di_i[i])
+    di_i_adj.append(di_i[i])
+    di_stem_adj.append(di_stem[i])
+  return [di_i_adj, di_stem_adj]
 
 # Function to generate a dataframe with n_gram and top max_row frequencies
 def generate_ngrams(df, n_gram, max_row):
+  print('ngram value')
+  print(n_gram)
   print('generation entered')
   df = clean_text(df)
   print('text cleaned up')
   tokens = token_extractor(df, n_gram)
   if n_gram == 2:
+    print('digrams')
     tokens = digram_extractor(tokens)
-  freq = Counter(tokens[1])
+  freq = FreqDist(tokens[1]).most_common(max_row)
+  print(freq)
+  if n_gram == 2:
+    for i in range(len(tokens[0])):
+      tokens[0][i] = [(tokens[0][i][0][0] + ' ' + tokens[0][i][1][0])]
   top_freq = []
   for i in range(max_row):
-    top_freq.append({'word': tokens[0][tokens[1].index(list(freq.most_common(max_row))[i][0])], 'wordcount': freq.most_common(max_row)[i][1]})
+    top_freq.append({'word': tokens[0][tokens[1].index(freq[i][0])][0], 'wordcount': freq[i][1]})
   return top_freq
 
 #function for calling ngram functionality from api
