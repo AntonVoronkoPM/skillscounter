@@ -18,9 +18,8 @@ print(os.environ['APP_SETTINGS'])
 
 @app.route('/predict', methods=['GET'])
 def prediction():
-  # job = q.enqueue(classifier)
-  # return {'job_id': job.get_id()}
-  return {'Status': 'Success'}
+  job = q.enqueue(classifier)
+  return {'job_id': job.get_id()}
 
 @app.route('/analyze/<position_id>', methods=['GET'])
 def analyzer(position_id):
