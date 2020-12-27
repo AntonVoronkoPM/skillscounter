@@ -41,21 +41,21 @@ def clean_text(skills):
   skills_na_cleaned =  [re.sub(r"http\S+", "", item) for item in skills_na_cleaned]
   print('web artifacts removed')
   #remove special characters left
-  skills_na_cleaned = [re.sub(r"[-()\"#/@;:<>{}`+=~|.!?,]", "", item) for item in skills_na_cleaned]
+  # skills_na_cleaned = [re.sub(r"[-()\"#/@;:<>{}`+=~|.!?,]", "", item) for item in skills_na_cleaned]
+  skills_na_cleaned = [re.sub(r"[-()\"@;:<>{}`=~|!?,]", "", item) for item in skills_na_cleaned]
   print('special symbols removed')
-  #convert to dataframe
-  # skills_na_cleaned = pd.DataFrame(np.array(skills_na_cleaned).reshape(-1))
-  # print('dataframe reshaped')
-  #Squeeze dataframe to obtain series
-  # data_cleaned = skills_na_cleaned.squeeze()
   return skills_na_cleaned
 
-def token_extractor(text, n_gram):
+def token_extractor(text, n_gram, isTechnical):
   # print(text)
   nltk_stopwords = nltk.corpus.stopwords.words('english')
   nltk_stopwords = set(nltk_stopwords)
   if n_gram == 1:
-    nltk_stopwords.update(all_stopwords['unigrams'])
+    if isTechnical:
+      # nltk_stopwords.update(all_stopwords['unigrams_tech'])
+      nltk_stopwords.update(all_stopwords['unigrams'])
+    else:
+      nltk_stopwords.update(all_stopwords['unigrams'])
   elif n_gram == 2:
     nltk_stopwords.update(all_stopwords['digrams'])
   stemmer = SnowballStemmer('english')
@@ -78,7 +78,7 @@ def digram_extractor(tokens):
   di_i_adj = []
   di_stem_adj = []
   for i in range(len(di_i)):
-    print('check digrams')
+    # print('check digrams')
     if (di_i[i][0][1] == di_i[i][1][1] and (di_i[i][0][1] == 'JJ' or di_i[i][0][1] == 'VB')) or (di_i[i][0][1]) == 'POS' or (di_i[i][1][1]) == 'POS':
       continue
     di_i_adj.append(di_i[i])
@@ -86,13 +86,14 @@ def digram_extractor(tokens):
   return [di_i_adj, di_stem_adj]
 
 # Function to generate a dataframe with n_gram and top max_row frequencies
-def generate_ngrams(df, n_gram, max_row):
+def generate_ngrams(df, n_gram, max_row, isTechnical):
   print('ngram value')
-  print(n_gram)
+  # print(df[0:5])
   print('generation entered')
   df = clean_text(df)
   print('text cleaned up')
-  tokens = token_extractor(df, n_gram)
+  # print(df[0:5])
+  tokens = token_extractor(df, n_gram, isTechnical)
   if n_gram == 2:
     print('digrams')
     tokens = digram_extractor(tokens)
@@ -118,6 +119,7 @@ def ngram(position_id):
     return {"Warning": "No such a position"}
 
 
+  isTechnical = relevant_title['isTechnical']
   position = relevant_title['title']
   position_vacancies = {'database': 'sm-web', 'collection': 'vacancies', 'filter': {'position': position}, 'projection': {}}
   pv_db = MongoAPI(position_vacancies)
@@ -143,8 +145,8 @@ def ngram(position_id):
   print('jobstrings received')
 
   #Generate ngram
-  data_1gram = generate_ngrams(new_posstr, 1, 40)
-  data_2gram = generate_ngrams(new_posstr, 2, 40)
+  data_1gram = generate_ngrams(new_posstr, 1, 40, isTechnical)
+  data_2gram = generate_ngrams(new_posstr, 2, 40, isTechnical)
   
   print('ngrams generated')
 
