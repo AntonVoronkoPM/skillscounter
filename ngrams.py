@@ -52,12 +52,14 @@ def token_extractor(text, n_gram, isTechnical):
   nltk_stopwords = set(nltk_stopwords)
   if n_gram == 1:
     if isTechnical:
-      # nltk_stopwords.update(all_stopwords['unigrams_tech'])
-      nltk_stopwords.update(all_stopwords['unigrams'])
+      nltk_stopwords.update(all_stopwords['unigramsTech'])
     else:
       nltk_stopwords.update(all_stopwords['unigrams'])
   elif n_gram == 2:
-    nltk_stopwords.update(all_stopwords['digrams'])
+    if isTechnical:
+      nltk_stopwords.update(all_stopwords['digramsTech'])
+    else:
+      nltk_stopwords.update(all_stopwords['digrams'])
   stemmer = SnowballStemmer('english')
   corpus_nltk = [pos_tag(word_tokenize(pos)) for pos in text]
   corpus_clean_nltk = [[],[]]
