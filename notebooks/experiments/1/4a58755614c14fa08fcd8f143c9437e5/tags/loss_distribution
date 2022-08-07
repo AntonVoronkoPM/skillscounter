@@ -1,0 +1,1 @@
+CategoricalDistribution(choices=('hinge', 'squared_hinge'))

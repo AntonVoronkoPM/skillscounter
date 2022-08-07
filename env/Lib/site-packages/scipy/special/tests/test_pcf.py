@@ -2,8 +2,8 @@
 
 """
 import numpy as np
-from numpy.testing import assert_allclose, assert_equal
 import scipy.special as sc
+from numpy.testing import assert_allclose, assert_equal
 
 
 def test_pbwa_segfault():

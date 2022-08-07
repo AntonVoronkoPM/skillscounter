@@ -1,7 +1,6 @@
 from datetime import datetime
 
 import pytest
-
 from pandas.tseries.holiday import (
     after_nearest_workday,
     before_nearest_workday,

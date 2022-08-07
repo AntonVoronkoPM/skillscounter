@@ -1,7 +1,9 @@
-import requests
 import json
-from models import MongoAPI
+
+import requests
 from bson import json_util
+
+from skillscounter.models import MongoAPI
 
 # f = open('30k-hr-linkedin.json', 'rb')
 # # print('here')

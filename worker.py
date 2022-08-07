@@ -1,9 +1,9 @@
 import os
 
 import redis
-from rq import Worker, Queue, Connection
+from rq import Connection, Queue, Worker
 
-listen = ['default']
+listen = ["default"]
 
 redis_conn = redis.Redis(
     host=os.getenv("REDIS_HOST", "redis-15346.c240.us-east-1-3.ec2.cloud.redislabs.com"),
@@ -12,8 +12,8 @@ redis_conn = redis.Redis(
 )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     with Connection(redis_conn):
-        print('connection')
+        print("connection")
         worker = Worker(list(map(Queue, listen)))
         worker.work()

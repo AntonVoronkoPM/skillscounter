@@ -1,0 +1,1 @@
+CategoricalDistribution(choices=('newton-cg', 'lbfgs', 'liblinear', 'sag', 'saga'))

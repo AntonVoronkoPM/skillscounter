@@ -1,4 +1,42 @@
+# Test clients
 client/
+client.py
+
+# Packaging
 env/
 .env
-client.py
+__pycache__/
+*.egg-info/
+
+# Data
+logs/
+stores/
+# data/
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Flask:
+instance/
+.webassets-cache
+
+# IPython
+.ipynb_checkpoints
+profile_default/
+ipython_config.py
+
+#Old
+classifier_model/
+tfidf_models
+skillscounter/models.py

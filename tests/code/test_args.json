@@ -1,0 +1,8 @@
+{
+  "analyzer": "char_wb",
+  "ngram_max_range": 7,
+  "loss": "squared_hinge",
+  "tol": 0.5565538335482086,
+  "C": 3.9948203287624398,
+  "solver": "sag"
+}
