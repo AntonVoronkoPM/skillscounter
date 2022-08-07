@@ -77,7 +77,7 @@ ghp-import==2.1.0
 gitdb==4.0.9
 GitPython==3.1.27
 grandalf==0.6
-great-expectations==0.15.17
+great-expectations==0.15.15
 greenlet==1.1.2
 gunicorn==20.0.4
 identify==2.5.3
