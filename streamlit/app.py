@@ -1,7 +1,6 @@
-import pandas as pd
 from pathlib import Path
-import streamlit as st
 
+import streamlit as st
 from config import config
 from skillscounter import main, utils
 

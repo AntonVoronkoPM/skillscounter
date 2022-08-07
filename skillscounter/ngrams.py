@@ -8,12 +8,11 @@ from datetime import datetime
 import nltk
 import numpy as np
 import pandas as pd
+from models import MongoAPI
 from nltk import pos_tag, word_tokenize
 from nltk.probability import FreqDist
 from nltk.stem import SnowballStemmer
 from nltk.util import ngrams
-
-from models import MongoAPI
 
 # nltk.download('punkt')
 # nltk.download('stopwords')

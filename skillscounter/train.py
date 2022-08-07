@@ -1,10 +1,10 @@
 import json
-
 from argparse import Namespace
 from typing import Dict
 
 import mlflow
-import numpy as np
+
+# import numpy as np
 import optuna
 import pandas as pd
 from sklearn.ensemble import VotingClassifier
@@ -14,13 +14,12 @@ from sklearn.metrics import (
     classification_report,
     precision_recall_fscore_support,
 )
-
 from sklearn.svm import LinearSVC
 
+from config.config import logger
 from skillscounter import data, utils
 from skillscounter.data import get_data_splits
 
-from config.config import logger
 
 def train(args: Namespace, df: pd.DataFrame, trial: optuna.trial._trial.Trial = None) -> Dict:
     """Train model on data.

@@ -1,13 +1,12 @@
 import json
 import random
+from typing import Dict
 from urllib.request import urlopen
 
 import numpy as np
 import pandas as pd
-
-from typing import Dict
-
 from pandas import json_normalize
+
 
 def json_to_dataframe(req: Dict) -> pd.DataFrame:
 
@@ -25,6 +24,7 @@ def json_to_dataframe(req: Dict) -> pd.DataFrame:
     works_data = first_level_normalizing
 
     return works_data
+
 
 def load_json_from_url(url: str) -> Dict:
     """Load JSON data from a URL.
@@ -62,12 +62,12 @@ def load_dict(filepath: str) -> Dict:
     Returns:
         Dict: loaded JSON data.
     """
-    with open(filepath, "r") as fp:
+    with open(filepath) as fp:
         d = json.load(fp)
     return d
 
 
-def save_dict(d: Dict, filepath: str, cls=None, sortkeys: bool=False) -> None:
+def save_dict(d: Dict, filepath: str, cls=None, sortkeys: bool = False) -> None:
     """Save a dictionary to a specific location.
 
     Args:

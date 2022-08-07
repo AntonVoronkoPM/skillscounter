@@ -1,9 +1,9 @@
+from typing import Tuple
+
 import numpy as np
 import pandas as pd
-
 from sklearn.model_selection import train_test_split
 
-from typing import Tuple
 
 def preprocess(df: pd.DataFrame) -> pd.DataFrame:
     """Preprocess the data.
@@ -18,7 +18,7 @@ def preprocess(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def get_data_splits(X: pd.Series, y: np.ndarray, train_size: float=0.7) -> Tuple:
+def get_data_splits(X: pd.Series, y: np.ndarray, train_size: float = 0.7) -> Tuple:
     """Generate balanced data splits.
 
     Args:

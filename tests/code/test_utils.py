@@ -1,21 +1,20 @@
+import json
 import tempfile
 from pathlib import Path
-from config import config
-from config.config import logger
-import json
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 
+from config import config
 from skillscounter import utils
 
 
 def test_json_to_dataframe():
     filepath = Path(config.BASE_DIR, "tests", "code", "7-14-20-raw.json")
-    with open(filepath, "r") as fp:
+    with open(filepath) as fp:
         df = utils.json_to_dataframe(json.load(fp))
     assert type(df) is pd.DataFrame
-    assert df.iloc[0,0] == "Front End Web Developer"
+    assert df.iloc[0, 0] == "Front End Web Developer"
 
 
 def test_load_json_from_url():
@@ -31,7 +30,7 @@ def test_load_frames():
     filepath = Path(config.BASE_DIR, "tests", "code", "devs_maks.csv")
     df = utils.load_frames(filepath)
     assert type(df) is pd.DataFrame
-    assert df.iloc[0,0] == "Role Summary"
+    assert df.iloc[0, 0] == "Role Summary"
 
 
 def test_save_and_load_dict():
