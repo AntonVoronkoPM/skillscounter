@@ -2,14 +2,12 @@ import shutil
 from pathlib import Path
 
 import mlflow
-import pytest
+
+# import pytest
 from typer.testing import CliRunner
 
 from config import config
-from skillscounter import main
 from skillscounter.main import app
-
-from config.config import logger
 
 runner = CliRunner()
 args_fp = Path(config.BASE_DIR, "tests", "code", "test_args.json")
@@ -21,7 +19,6 @@ def delete_experiment(experiment_name):
     client.delete_experiment(experiment_id=experiment_id)
 
 
-# @pytest.mark.training
 def test_train_model():
     experiment_name = "test_experiment"
     run_name = "test_run"
@@ -42,7 +39,6 @@ def test_train_model():
     # shutil.rmtree(Path(config.MODEL_REGISTRY, ".trash"))
 
 
-# @pytest.mark.training
 def test_optimize():
     study_name = "test_optimization"
     num_trials = 1
@@ -62,11 +58,11 @@ def test_optimize():
     # shutil.rmtree(Path(config.MODEL_REGISTRY, ".trash"))
 
 
-def test_load_artifacts():
-    # run_id = open(Path(config.CONFIG_DIR, "run_id.txt")).read()
-    run_id = open(Path("run_id.txt")).read()
-    artifacts = main.load_artifacts(run_id=run_id)
-    assert len(artifacts)
+# def test_load_artifacts():
+#     # run_id = open(Path(config.CONFIG_DIR, "run_id.txt")).read()
+#     run_id = open(Path("run_id.txt")).read()
+#     artifacts = main.load_artifacts(run_id=run_id)
+#     assert len(artifacts)
 
 shutil.rmtree(Path(config.MODEL_REGISTRY, ".trash"))
 # def test_predict_tag():

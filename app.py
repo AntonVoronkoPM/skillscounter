@@ -1,14 +1,16 @@
 import os
-from datetime import datetime
 
 from flask import Flask
 from flask_cors import CORS
+from ngrams import ngram
+from prediction import classifier
 from rq import Queue
 from rq.job import Job
 
-from ngrams import ngram
-from prediction import classifier
 from worker import redis_conn
+
+# from datetime import datetime
+
 
 app = Flask(__name__)
 cors = CORS(app, resources=r"/*")

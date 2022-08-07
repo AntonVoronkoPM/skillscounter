@@ -2,7 +2,6 @@ import json
 
 import requests
 from bson import json_util
-
 from models import MongoAPI
 from prediction import prediction
 from preprocessing import dataset_preparation, json_to_dataframe
