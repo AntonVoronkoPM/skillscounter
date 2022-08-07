@@ -19,8 +19,8 @@ skillscounter/
 
 ### Workflow
 ```bash
-python tagifai/main.py load-data
-python tagifai/main.py optimize --args-fp="config/args.json" --study-name="optimization" --num-trials=10
-python tagifai/main.py train-model --args-fp="config/args.json" --experiment-name="baselines" --run-name="voter"
-python tagifai/main.py predict --text="Project management"
+python skillscounter/main.py load-data
+python skillscounter/main.py optimize --args-fp="config/args.json" --study-name="optimization" --num-trials=10
+python skillscounter/main.py train-model --args-fp="config/args.json" --experiment-name="baselines" --run-name="voter"
+python skillscounter/main.py predict --text="Project management"
 ```
