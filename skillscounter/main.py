@@ -1,32 +1,29 @@
 import json
 import tempfile
-import mlflow
-import optuna
-import joblib
-import pandas as pd
-import numpy as np
-from numpyencoder import NumpyEncoder
-from optuna.integration.mlflow import MLflowCallback
-from typing import Dict
-
-from skillscounter import data, train, utils
-from config import config
-from config.config import logger
-
-from skillscounter.models import MongoAPI
-
 from argparse import Namespace
 from pathlib import Path
-import typer
+from typing import Dict, List
 
-# from typing import TypeVar
-# DataFrameStr = TypeVar("pandas.core.frame.DataFrame(str)")
+import joblib
+import mlflow
+import numpy as np
+import optuna
+import typer
+from numpyencoder import NumpyEncoder
+from optuna.integration.mlflow import MLflowCallback
+
+from config import config
+from config.config import logger
+from skillscounter import train, utils
+
+# from skillscounter.models import MongoAPI
 
 # Initialize Typer CLI app
 app = typer.Typer()
 
+
 @app.command()
-def predict(text: str, run_id: str = None) -> np.ndarray:
+def predict(text: List, run_id: str = None) -> np.ndarray:
     """Predict tag for text.
 
     Args:
@@ -49,6 +46,7 @@ def predict(text: str, run_id: str = None) -> np.ndarray:
 
     # logger.info(predictions)
     return y_pred
+
 
 @app.command()
 def train_model(
@@ -94,13 +92,16 @@ def train_model(
             mlflow.log_artifacts(dp)
 
     # Save to config
-    if not test_run: # pragma: no cover, actual run
+    if not test_run:  # pragma: no cover, actual run
         # open(Path(config.CONFIG_DIR, "run_id.txt"), "w").write(run_id)
         open(Path("run_id.txt"), "w").write(run_id)
         utils.save_dict(performance, Path("performance.json"))
 
+
 @app.command()
-def optimize(args_fp: str = "config/args.json", study_name: str = "optimization", num_trials: int = 20) -> None:
+def optimize(
+    args_fp: str = "config/args.json", study_name: str = "optimization", num_trials: int = 20
+) -> None:
     """Optimize hyperparameters.
 
     Args:
@@ -131,6 +132,7 @@ def optimize(args_fp: str = "config/args.json", study_name: str = "optimization"
     logger.info(f"\nBest value (f1): {study.best_trial.value}")
     logger.info(f"Best hyperparameters: {json.dumps(study.best_trial.params, indent=2)}")
 
+
 @app.command()
 def load_artifacts(run_id: str = None) -> Dict:
     """Load artifacts for a given run_id.
@@ -153,67 +155,69 @@ def load_artifacts(run_id: str = None) -> Dict:
 
     return {"args": args, "vectorizer": vectorizer, "model": model, "performance": performance}
 
-def classifier():
-    # Config
-    vac = {
-        "database": "sm-web",
-        "collection": "vacancies",
-        "filter": {"analyzed": False},
-        "projection": {},
-    }
 
-    vac_db = MongoAPI(vac)
-    new_vacancies = vac_db.read()
+# def classifier():
+#     # Config
+#     vac = {
+#         "database": "sm-web",
+#         "collection": "vacancies",
+#         "filter": {"analyzed": False},
+#         "projection": {},
+#     }
 
-    if len(new_vacancies) == 0:
-        return {"Warning": "Nothing to analyze"}
+#     vac_db = MongoAPI(vac)
+#     new_vacancies = vac_db.read()
 
-    new_vacancies_id = []
+#     if len(new_vacancies) == 0:
+#         return {"Warning": "Nothing to analyze"}
 
-    for i in new_vacancies:
-        new_vacancies_id.append(str(i["_id"]))
+#     new_vacancies_id = []
 
-    # Config ?
-    jobstr = {
-        "database": "sm-web",
-        "collection": "jobstrings",
-        "filter": {"vacancyId": {"$in": new_vacancies_id}},
-        "projection": {"tag": 1, "text": 1},
-    }
+#     for i in new_vacancies:
+#         new_vacancies_id.append(str(i["_id"]))
 
-    jobstr_db = MongoAPI(jobstr)
-    new_jobstr = jobstr_db.read()
+#     # Config ?
+#     jobstr = {
+#         "database": "sm-web",
+#         "collection": "jobstrings",
+#         "filter": {"vacancyId": {"$in": new_vacancies_id}},
+#         "projection": {"tag": 1, "text": 1},
+#     }
 
-    # if len(new_jobstr) == 0:
-    #   for i in new_vacancies:
-    #     data = {'filter': {'_id': i['_id']}, 'updated_data': {'$set': {'analyzed': True}}}
-    #     vac_db.update(data)
-    #   return {"Status": "Analyzed status was updated"}
+#     jobstr_db = MongoAPI(jobstr)
+#     new_jobstr = jobstr_db.read()
 
-    targets = prediction(new_jobstr)
+#     # if len(new_jobstr) == 0:
+#     #   for i in new_vacancies:
+#     #     data = {'filter': {'_id': i['_id']}, 'updated_data': {'$set': {'analyzed': True}}}
+#     #     vac_db.update(data)
+#     #   return {"Status": "Analyzed status was updated"}
 
-    res = []
+#     targets = prediction(new_jobstr)
 
-    for i in range(len(new_jobstr)):
-        new_jobstr[i]["target"] = int(targets[i])
-        data = {
-            "filter": {"_id": new_jobstr[i]["_id"]},
-            "updated_data": {"$set": {"target": new_jobstr[i]["target"]}},
-        }
-        res.append(jobstr_db.update(data))
+#     res = []
 
-    res_analyze = []
-    if res.count("Nothing was updated") == 0:
-        for i in new_vacancies:
-            data = {"filter": {"_id": i["_id"]}, "updated_data": {"$set": {"analyzed": True}}}
-            res_analyze.append(vac_db.update(data))
-    else:
-        return {"Warning": "Nothing was updated"}
+#     for i in range(len(new_jobstr)):
+#         new_jobstr[i]["target"] = int(targets[i])
+#         data = {
+#             "filter": {"_id": new_jobstr[i]["_id"]},
+#             "updated_data": {"$set": {"target": new_jobstr[i]["target"]}},
+#         }
+#         res.append(jobstr_db.update(data))
 
-    if res_analyze.count("Nothing was updated") == 0:
-        return {"Status": "Targets set successfully"}
-    else:
-        return {"Error": "Analyzed status wasn't updated"}
+#     res_analyze = []
+#     if res.count("Nothing was updated") == 0:
+#         for i in new_vacancies:
+#             data = {"filter": {"_id": i["_id"]}, "updated_data": {"$set": {"analyzed": True}}}
+#             res_analyze.append(vac_db.update(data))
+#     else:
+#         return {"Warning": "Nothing was updated"}
+
+#     if res_analyze.count("Nothing was updated") == 0:
+#         return {"Status": "Targets set successfully"}
+#     else:
+#         return {"Error": "Analyzed status wasn't updated"}
+
 
 if __name__ == "__main__":
     app()  # pragma: no cover, live app
