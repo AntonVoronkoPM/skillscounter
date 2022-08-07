@@ -2,11 +2,11 @@ import os
 
 from flask import Flask
 from flask_cors import CORS
-from ngrams import ngram
-from prediction import classifier
 from rq import Queue
 from rq.job import Job
 
+from skillscounter.main import predict
+from skillscounter.ngrams import ngram
 from worker import redis_conn
 
 # from datetime import datetime
@@ -23,7 +23,7 @@ print(os.environ["APP_SETTINGS"])
 
 @app.route("/predict", methods=["GET"])
 def prediction():
-    job = q.enqueue(classifier)
+    job = q.enqueue(predict)
     return {"job_id": job.get_id()}
 
 

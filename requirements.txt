@@ -28,7 +28,7 @@ certifi==2020.6.20
 cffi==1.15.1
 cfgv==3.3.1
 chardet==3.0.4
-charset-normalizer==2.1.0
+charset-normalizer==2.0.0
 click==8.1.3
 cliff==3.10.1
 cloudpickle==2.1.0
@@ -55,8 +55,8 @@ dnspython==2.0.0
 docker==5.0.3
 dpath==2.0.6
 dulwich==0.20.45
-dvc==2.10.2
-dvc-render==0.0.5
+dvc==2.17.0
+dvc-render==0.0.9
 dvclive==0.10.0
 entrypoints==0.4
 executing==0.8.3
@@ -95,7 +95,7 @@ isodate==0.6.1
 isort==5.10.1
 itsdangerous==1.1.0
 jedi==0.18.1
-Jinja2==2.11.2
+Jinja2==3.0.3
 joblib==1.1.0
 json5==0.9.8
 jsonpatch==1.32
@@ -113,7 +113,7 @@ lime==0.2.0.1
 mailchecker==4.1.19
 Mako==1.2.1
 Markdown==3.4.1
-MarkupSafe==1.1.1
+MarkupSafe==2.0
 matplotlib==3.5.2
 matplotlib-inline==0.1.3
 mccabe==0.6.1
@@ -198,7 +198,7 @@ pyzmq==23.2.0
 querystring-parser==1.2.4
 redis==3.5.3
 regex==2020.11.13
-requests==2.22.0
+requests==2.26.0
 requests-oauthlib==1.3.1
 rich==12.5.1
 rq==1.6.1
@@ -207,7 +207,7 @@ ruamel.yaml.clib==0.2.6
 scikit-image==0.19.3
 scikit-learn==1.1.1
 scipy==1.9.0
-scmrepo==0.0.19
+scmrepo==0.0.25
 seaborn==0.11.2
 Send2Trash==1.8.0
 shortuuid==1.0.9
