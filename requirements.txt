@@ -220,7 +220,7 @@ SQLAlchemy==1.4.39
 sqlparse==0.4.2
 srsly==1.0.4
 stack-data==0.3.0
-stevedore==4.0.0
+stevedore==3.5.0
 tabulate==0.8.10
 termcolor==1.1.0
 terminado==0.15.0
