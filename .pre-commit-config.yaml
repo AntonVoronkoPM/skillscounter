@@ -10,7 +10,7 @@ repos:
     -   id: check-yaml
         exclude: "mkdocs.yml"
     -   id: check-added-large-files
-        args: ['--maxkb=1000']
+        args: ['--maxkb=8000']
         exclude: "notebooks"
     -   id: check-ast
     -   id: check-json

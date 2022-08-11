@@ -37,6 +37,4 @@ profile_default/
 ipython_config.py
 
 #Old
-classifier_model/
-tfidf_models
 skillscounter/models.py
