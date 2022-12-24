@@ -1,0 +1,1016 @@
+pytest
+============================= test session starts ==============================
+platform linux -- Python 3.8.10, pytest-7.1.2, pluggy-1.0.0
+rootdir: /mnt/c/Users/avoronk/skills
+plugins: anyio-3.6.1, cov-4.0.0
+collected 10 items
+
+tests/code/test_data.py .                                                [ 10%]
+tests/code/test_main.py FFFF                                             [ 50%]
+tests/code/test_utils.py .....                                           [100%]
+
+=================================== FAILURES ===================================
+_______________________________ test_train_model _______________________________
+
+    def test_train_model():
+        print(args_fp)
+        experiment_name = "test_experiment"
+        run_name = "test_run"
+>       result = runner.invoke(
+            app,
+            [
+                "train-model",
+                f"--args-fp={args_fp}",
+                f"--experiment-name={experiment_name}",
+                f"--run-name={run_name}",
+                "--test-run",
+            ],
+        )
+
+tests/code/test_main.py:26:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+env/lib/python3.8/site-packages/typer/testing.py:20: in invoke
+    use_cli = _get_command(app)
+env/lib/python3.8/site-packages/typer/main.py:232: in get_command
+    click_command = get_group(typer_instance)
+env/lib/python3.8/site-packages/typer/main.py:218: in get_group
+    group = get_group_from_info(TyperInfo(typer_instance))
+env/lib/python3.8/site-packages/typer/main.py:349: in get_group_from_info
+    command = get_command_from_info(command_info=command_info)
+env/lib/python3.8/site-packages/typer/main.py:425: in get_command_from_info
+    ) = get_params_convertors_ctx_param_name_from_function(command_info.callback)
+env/lib/python3.8/site-packages/typer/main.py:406: in get_params_convertors_ctx_param_name_from_function
+    click_param, convertor = get_click_param(param)
+env/lib/python3.8/site-packages/typer/main.py:659: in get_click_param
+    parameter_type = get_click_type(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def get_click_type(
+        *, annotation: Any, parameter_info: ParameterInfo
+    ) -> click.ParamType:
+        if annotation == str:
+            return click.STRING
+        elif annotation == int:
+            if parameter_info.min is not None or parameter_info.max is not None:
+                min_ = None
+                max_ = None
+                if parameter_info.min is not None:
+                    min_ = int(parameter_info.min)
+                if parameter_info.max is not None:
+                    max_ = int(parameter_info.max)
+                return click.IntRange(min=min_, max=max_, clamp=parameter_info.clamp)
+            else:
+                return click.INT
+        elif annotation == float:
+            if parameter_info.min is not None or parameter_info.max is not None:
+                return click.FloatRange(
+                    min=parameter_info.min,
+                    max=parameter_info.max,
+                    clamp=parameter_info.clamp,
+                )
+            else:
+                return click.FLOAT
+        elif annotation == bool:
+            return click.BOOL
+        elif annotation == UUID:
+            return click.UUID
+        elif annotation == datetime:
+            return click.DateTime(formats=parameter_info.formats)
+        elif (
+            annotation == Path
+            or parameter_info.allow_dash
+            or parameter_info.path_type
+            or parameter_info.resolve_path
+        ):
+            return click.Path(
+                exists=parameter_info.exists,
+                file_okay=parameter_info.file_okay,
+                dir_okay=parameter_info.dir_okay,
+                writable=parameter_info.writable,
+                readable=parameter_info.readable,
+                resolve_path=parameter_info.resolve_path,
+                allow_dash=parameter_info.allow_dash,
+                path_type=parameter_info.path_type,
+            )
+        elif lenient_issubclass(annotation, FileTextWrite):
+            return click.File(
+                mode=parameter_info.mode or "w",
+                encoding=parameter_info.encoding,
+                errors=parameter_info.errors,
+                lazy=parameter_info.lazy,
+                atomic=parameter_info.atomic,
+            )
+        elif lenient_issubclass(annotation, FileText):
+            return click.File(
+                mode=parameter_info.mode or "r",
+                encoding=parameter_info.encoding,
+                errors=parameter_info.errors,
+                lazy=parameter_info.lazy,
+                atomic=parameter_info.atomic,
+            )
+        elif lenient_issubclass(annotation, FileBinaryRead):
+            return click.File(
+                mode=parameter_info.mode or "rb",
+                encoding=parameter_info.encoding,
+                errors=parameter_info.errors,
+                lazy=parameter_info.lazy,
+                atomic=parameter_info.atomic,
+            )
+        elif lenient_issubclass(annotation, FileBinaryWrite):
+            return click.File(
+                mode=parameter_info.mode or "wb",
+                encoding=parameter_info.encoding,
+                errors=parameter_info.errors,
+                lazy=parameter_info.lazy,
+                atomic=parameter_info.atomic,
+            )
+        elif lenient_issubclass(annotation, Enum):
+            return click.Choice(
+                [item.value for item in annotation],
+                case_sensitive=parameter_info.case_sensitive,
+            )
+>       raise RuntimeError(f"Type not yet supported: {annotation}")  # pragma no cover
+E       RuntimeError: Type not yet supported: ~T
+
+env/lib/python3.8/site-packages/typer/main.py:590: RuntimeError
+----------------------------- Captured stdout call -----------------------------
+/mnt/c/Users/avoronk/skills/tests/code/test_args.json
+________________________________ test_optimize _________________________________
+
+    def test_optimize():
+        study_name = "test_optimization"
+        num_trials = 1
+>       result = runner.invoke(
+            app,
+            [
+                "optimize",
+                f"--args-fp={args_fp}",
+                f"--study-name={study_name}",
+                f"--num-trials={num_trials}",
+            ],
+        )
+
+tests/code/test_main.py:47:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+env/lib/python3.8/site-packages/typer/testing.py:20: in invoke
+    use_cli = _get_command(app)
+env/lib/python3.8/site-packages/typer/main.py:232: in get_command
+    click_command = get_group(typer_instance)
+env/lib/python3.8/site-packages/typer/main.py:218: in get_group
+    group = get_group_from_info(TyperInfo(typer_instance))
+env/lib/python3.8/site-packages/typer/main.py:349: in get_group_from_info
+    command = get_command_from_info(command_info=command_info)
+env/lib/python3.8/site-packages/typer/main.py:425: in get_command_from_info
+    ) = get_params_convertors_ctx_param_name_from_function(command_info.callback)
+env/lib/python3.8/site-packages/typer/main.py:406: in get_params_convertors_ctx_param_name_from_function
+    click_param, convertor = get_click_param(param)
+env/lib/python3.8/site-packages/typer/main.py:659: in get_click_param
+    parameter_type = get_click_type(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def get_click_type(
+        *, annotation: Any, parameter_info: ParameterInfo
+    ) -> click.ParamType:
+        if annotation == str:
+            return click.STRING
+        elif annotation == int:
+            if parameter_info.min is not None or parameter_info.max is not None:
+                min_ = None
+                max_ = None
+                if parameter_info.min is not None:
+                    min_ = int(parameter_info.min)
+                if parameter_info.max is not None:
+                    max_ = int(parameter_info.max)
+                return click.IntRange(min=min_, max=max_, clamp=parameter_info.clamp)
+            else:
+                return click.INT
+        elif annotation == float:
+            if parameter_info.min is not None or parameter_info.max is not None:
+                return click.FloatRange(
+                    min=parameter_info.min,
+                    max=parameter_info.max,
+                    clamp=parameter_info.clamp,
+                )
+            else:
+                return click.FLOAT
+        elif annotation == bool:
+            return click.BOOL
+        elif annotation == UUID:
+            return click.UUID
+        elif annotation == datetime:
+            return click.DateTime(formats=parameter_info.formats)
+        elif (
+            annotation == Path
+            or parameter_info.allow_dash
+            or parameter_info.path_type
+            or parameter_info.resolve_path
+        ):
+            return click.Path(
+                exists=parameter_info.exists,
+                file_okay=parameter_info.file_okay,
+                dir_okay=parameter_info.dir_okay,
+                writable=parameter_info.writable,
+                readable=parameter_info.readable,
+                resolve_path=parameter_info.resolve_path,
+                allow_dash=parameter_info.allow_dash,
+                path_type=parameter_info.path_type,
+            )
+        elif lenient_issubclass(annotation, FileTextWrite):
+            return click.File(
+                mode=parameter_info.mode or "w",
+                encoding=parameter_info.encoding,
+                errors=parameter_info.errors,
+                lazy=parameter_info.lazy,
+                atomic=parameter_info.atomic,
+            )
+        elif lenient_issubclass(annotation, FileText):
+            return click.File(
+                mode=parameter_info.mode or "r",
+                encoding=parameter_info.encoding,
+                errors=parameter_info.errors,
+                lazy=parameter_info.lazy,
+                atomic=parameter_info.atomic,
+            )
+        elif lenient_issubclass(annotation, FileBinaryRead):
+            return click.File(
+                mode=parameter_info.mode or "rb",
+                encoding=parameter_info.encoding,
+                errors=parameter_info.errors,
+                lazy=parameter_info.lazy,
+                atomic=parameter_info.atomic,
+            )
+        elif lenient_issubclass(annotation, FileBinaryWrite):
+            return click.File(
+                mode=parameter_info.mode or "wb",
+                encoding=parameter_info.encoding,
+                errors=parameter_info.errors,
+                lazy=parameter_info.lazy,
+                atomic=parameter_info.atomic,
+            )
+        elif lenient_issubclass(annotation, Enum):
+            return click.Choice(
+                [item.value for item in annotation],
+                case_sensitive=parameter_info.case_sensitive,
+            )
+>       raise RuntimeError(f"Type not yet supported: {annotation}")  # pragma no cover
+E       RuntimeError: Type not yet supported: ~T
+
+env/lib/python3.8/site-packages/typer/main.py:590: RuntimeError
+_____________________________ test_load_artifacts ______________________________
+
+    def test_load_artifacts():
+        # run_id = open(Path(config.CONFIG_DIR, "run_id.txt")).read()
+        run_id = open(Path("run_id.txt")).read()
+>       artifacts = runner.invoke(app, ["load-artifacts", f"--run_id={run_id}"])
+
+tests/code/test_main.py:66:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+env/lib/python3.8/site-packages/typer/testing.py:20: in invoke
+    use_cli = _get_command(app)
+env/lib/python3.8/site-packages/typer/main.py:232: in get_command
+    click_command = get_group(typer_instance)
+env/lib/python3.8/site-packages/typer/main.py:218: in get_group
+    group = get_group_from_info(TyperInfo(typer_instance))
+env/lib/python3.8/site-packages/typer/main.py:349: in get_group_from_info
+    command = get_command_from_info(command_info=command_info)
+env/lib/python3.8/site-packages/typer/main.py:425: in get_command_from_info
+    ) = get_params_convertors_ctx_param_name_from_function(command_info.callback)
+env/lib/python3.8/site-packages/typer/main.py:406: in get_params_convertors_ctx_param_name_from_function
+    click_param, convertor = get_click_param(param)
+env/lib/python3.8/site-packages/typer/main.py:659: in get_click_param
+    parameter_type = get_click_type(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def get_click_type(
+        *, annotation: Any, parameter_info: ParameterInfo
+    ) -> click.ParamType:
+        if annotation == str:
+            return click.STRING
+        elif annotation == int:
+            if parameter_info.min is not None or parameter_info.max is not None:
+                min_ = None
+                max_ = None
+                if parameter_info.min is not None:
+                    min_ = int(parameter_info.min)
+                if parameter_info.max is not None:
+                    max_ = int(parameter_info.max)
+                return click.IntRange(min=min_, max=max_, clamp=parameter_info.clamp)
+            else:
+                return click.INT
+        elif annotation == float:
+            if parameter_info.min is not None or parameter_info.max is not None:
+                return click.FloatRange(
+                    min=parameter_info.min,
+                    max=parameter_info.max,
+                    clamp=parameter_info.clamp,
+                )
+            else:
+                return click.FLOAT
+        elif annotation == bool:
+            return click.BOOL
+        elif annotation == UUID:
+            return click.UUID
+        elif annotation == datetime:
+            return click.DateTime(formats=parameter_info.formats)
+        elif (
+            annotation == Path
+            or parameter_info.allow_dash
+            or parameter_info.path_type
+            or parameter_info.resolve_path
+        ):
+            return click.Path(
+                exists=parameter_info.exists,
+                file_okay=parameter_info.file_okay,
+                dir_okay=parameter_info.dir_okay,
+                writable=parameter_info.writable,
+                readable=parameter_info.readable,
+                resolve_path=parameter_info.resolve_path,
+                allow_dash=parameter_info.allow_dash,
+                path_type=parameter_info.path_type,
+            )
+        elif lenient_issubclass(annotation, FileTextWrite):
+            return click.File(
+                mode=parameter_info.mode or "w",
+                encoding=parameter_info.encoding,
+                errors=parameter_info.errors,
+                lazy=parameter_info.lazy,
+                atomic=parameter_info.atomic,
+            )
+        elif lenient_issubclass(annotation, FileText):
+            return click.File(
+                mode=parameter_info.mode or "r",
+                encoding=parameter_info.encoding,
+                errors=parameter_info.errors,
+                lazy=parameter_info.lazy,
+                atomic=parameter_info.atomic,
+            )
+        elif lenient_issubclass(annotation, FileBinaryRead):
+            return click.File(
+                mode=parameter_info.mode or "rb",
+                encoding=parameter_info.encoding,
+                errors=parameter_info.errors,
+                lazy=parameter_info.lazy,
+                atomic=parameter_info.atomic,
+            )
+        elif lenient_issubclass(annotation, FileBinaryWrite):
+            return click.File(
+                mode=parameter_info.mode or "wb",
+                encoding=parameter_info.encoding,
+                errors=parameter_info.errors,
+                lazy=parameter_info.lazy,
+                atomic=parameter_info.atomic,
+            )
+        elif lenient_issubclass(annotation, Enum):
+            return click.Choice(
+                [item.value for item in annotation],
+                case_sensitive=parameter_info.case_sensitive,
+            )
+>       raise RuntimeError(f"Type not yet supported: {annotation}")  # pragma no cover
+E       RuntimeError: Type not yet supported: ~T
+
+env/lib/python3.8/site-packages/typer/main.py:590: RuntimeError
+_________________________________ test_predict _________________________________
+
+    def test_predict():
+        text = "Transfer learning with transformers for text classification."
+>       result = runner.invoke(app, ["predict", f"--text={[text]}"])
+
+tests/code/test_main.py:72:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+env/lib/python3.8/site-packages/typer/testing.py:20: in invoke
+    use_cli = _get_command(app)
+env/lib/python3.8/site-packages/typer/main.py:232: in get_command
+    click_command = get_group(typer_instance)
+env/lib/python3.8/site-packages/typer/main.py:218: in get_group
+    group = get_group_from_info(TyperInfo(typer_instance))
+env/lib/python3.8/site-packages/typer/main.py:349: in get_group_from_info
+    command = get_command_from_info(command_info=command_info)
+env/lib/python3.8/site-packages/typer/main.py:425: in get_command_from_info
+    ) = get_params_convertors_ctx_param_name_from_function(command_info.callback)
+env/lib/python3.8/site-packages/typer/main.py:406: in get_params_convertors_ctx_param_name_from_function
+    click_param, convertor = get_click_param(param)
+env/lib/python3.8/site-packages/typer/main.py:659: in get_click_param
+    parameter_type = get_click_type(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def get_click_type(
+        *, annotation: Any, parameter_info: ParameterInfo
+    ) -> click.ParamType:
+        if annotation == str:
+            return click.STRING
+        elif annotation == int:
+            if parameter_info.min is not None or parameter_info.max is not None:
+                min_ = None
+                max_ = None
+                if parameter_info.min is not None:
+                    min_ = int(parameter_info.min)
+                if parameter_info.max is not None:
+                    max_ = int(parameter_info.max)
+                return click.IntRange(min=min_, max=max_, clamp=parameter_info.clamp)
+            else:
+                return click.INT
+        elif annotation == float:
+            if parameter_info.min is not None or parameter_info.max is not None:
+                return click.FloatRange(
+                    min=parameter_info.min,
+                    max=parameter_info.max,
+                    clamp=parameter_info.clamp,
+                )
+            else:
+                return click.FLOAT
+        elif annotation == bool:
+            return click.BOOL
+        elif annotation == UUID:
+            return click.UUID
+        elif annotation == datetime:
+            return click.DateTime(formats=parameter_info.formats)
+        elif (
+            annotation == Path
+            or parameter_info.allow_dash
+            or parameter_info.path_type
+            or parameter_info.resolve_path
+        ):
+            return click.Path(
+                exists=parameter_info.exists,
+                file_okay=parameter_info.file_okay,
+                dir_okay=parameter_info.dir_okay,
+                writable=parameter_info.writable,
+                readable=parameter_info.readable,
+                resolve_path=parameter_info.resolve_path,
+                allow_dash=parameter_info.allow_dash,
+                path_type=parameter_info.path_type,
+            )
+        elif lenient_issubclass(annotation, FileTextWrite):
+            return click.File(
+                mode=parameter_info.mode or "w",
+                encoding=parameter_info.encoding,
+                errors=parameter_info.errors,
+                lazy=parameter_info.lazy,
+                atomic=parameter_info.atomic,
+            )
+        elif lenient_issubclass(annotation, FileText):
+            return click.File(
+                mode=parameter_info.mode or "r",
+                encoding=parameter_info.encoding,
+                errors=parameter_info.errors,
+                lazy=parameter_info.lazy,
+                atomic=parameter_info.atomic,
+            )
+        elif lenient_issubclass(annotation, FileBinaryRead):
+            return click.File(
+                mode=parameter_info.mode or "rb",
+                encoding=parameter_info.encoding,
+                errors=parameter_info.errors,
+                lazy=parameter_info.lazy,
+                atomic=parameter_info.atomic,
+            )
+        elif lenient_issubclass(annotation, FileBinaryWrite):
+            return click.File(
+                mode=parameter_info.mode or "wb",
+                encoding=parameter_info.encoding,
+                errors=parameter_info.errors,
+                lazy=parameter_info.lazy,
+                atomic=parameter_info.atomic,
+            )
+        elif lenient_issubclass(annotation, Enum):
+            return click.Choice(
+                [item.value for item in annotation],
+                case_sensitive=parameter_info.case_sensitive,
+            )
+>       raise RuntimeError(f"Type not yet supported: {annotation}")  # pragma no cover
+E       RuntimeError: Type not yet supported: ~T
+
+env/lib/python3.8/site-packages/typer/main.py:590: RuntimeError
+=============================== warnings summary ===============================
+env/lib/python3.8/site-packages/sklearn/utils/multiclass.py:14
+  /mnt/c/Users/avoronk/skills/env/lib/python3.8/site-packages/sklearn/utils/multiclass.py:14: DeprecationWarning: Please use `spmatrix` from the `scipy.sparse` namespace, the `scipy.sparse.base` namespace is deprecated.
+    from scipy.sparse.base import spmatrix
+
+env/lib/python3.8/site-packages/mlflow/types/schema.py:47
+  /mnt/c/Users/avoronk/skills/env/lib/python3.8/site-packages/mlflow/types/schema.py:47: DeprecationWarning: `np.object` is a deprecated alias for the builtin `object`. To silence this warning, use `object` by itself. Doing this will not modify any behavior and is safe.
+  Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
+    binary = (7, np.dtype("bytes"), "BinaryType", np.object)
+
+env/lib/python3.8/site-packages/sklearn/utils/optimize.py:18
+  /mnt/c/Users/avoronk/skills/env/lib/python3.8/site-packages/sklearn/utils/optimize.py:18: DeprecationWarning: Please use `line_search_wolfe2` from the `scipy.optimize` namespace, the `scipy.optimize.linesearch` namespace is deprecated.
+    from scipy.optimize.linesearch import line_search_wolfe2, line_search_wolfe1
+
+env/lib/python3.8/site-packages/sklearn/utils/optimize.py:18
+  /mnt/c/Users/avoronk/skills/env/lib/python3.8/site-packages/sklearn/utils/optimize.py:18: DeprecationWarning: Please use `line_search_wolfe1` from the `scipy.optimize` namespace, the `scipy.optimize.linesearch` namespace is deprecated.
+    from scipy.optimize.linesearch import line_search_wolfe2, line_search_wolfe1
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/code/test_main.py::test_train_model - RuntimeError: Type not yet...
+FAILED tests/code/test_main.py::test_optimize - RuntimeError: Type not yet su...
+FAILED tests/code/test_main.py::test_load_artifacts - RuntimeError: Type not ...
+FAILED tests/code/test_main.py::test_predict - RuntimeError: Type not yet sup...
+============= 4 failed, 6 passed, 4 warnings in 183.48s (0:03:03) ==============
+pytest
+============================= test session starts ==============================
+platform linux -- Python 3.8.10, pytest-7.1.2, pluggy-1.0.0
+rootdir: /mnt/c/Users/avoronk/skills
+plugins: anyio-3.6.1, cov-4.0.0
+collected 10 items
+
+tests/code/test_data.py .                                                [ 10%]
+tests/code/test_main.py FFFF                                             [ 50%]
+tests/code/test_utils.py .....                                           [100%]
+
+=================================== FAILURES ===================================
+_______________________________ test_train_model _______________________________
+
+    def test_train_model():
+        print(args_fp)
+        experiment_name = "test_experiment"
+        run_name = "test_run"
+>       result = runner.invoke(
+            app,
+            [
+                "train-model",
+                f"--args-fp={args_fp}",
+                f"--experiment-name={experiment_name}",
+                f"--run-name={run_name}",
+                "--test-run",
+            ],
+        )
+
+tests/code/test_main.py:26:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+env/lib/python3.8/site-packages/typer/testing.py:20: in invoke
+    use_cli = _get_command(app)
+env/lib/python3.8/site-packages/typer/main.py:232: in get_command
+    click_command = get_group(typer_instance)
+env/lib/python3.8/site-packages/typer/main.py:218: in get_group
+    group = get_group_from_info(TyperInfo(typer_instance))
+env/lib/python3.8/site-packages/typer/main.py:349: in get_group_from_info
+    command = get_command_from_info(command_info=command_info)
+env/lib/python3.8/site-packages/typer/main.py:425: in get_command_from_info
+    ) = get_params_convertors_ctx_param_name_from_function(command_info.callback)
+env/lib/python3.8/site-packages/typer/main.py:406: in get_params_convertors_ctx_param_name_from_function
+    click_param, convertor = get_click_param(param)
+env/lib/python3.8/site-packages/typer/main.py:659: in get_click_param
+    parameter_type = get_click_type(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def get_click_type(
+        *, annotation: Any, parameter_info: ParameterInfo
+    ) -> click.ParamType:
+        if annotation == str:
+            return click.STRING
+        elif annotation == int:
+            if parameter_info.min is not None or parameter_info.max is not None:
+                min_ = None
+                max_ = None
+                if parameter_info.min is not None:
+                    min_ = int(parameter_info.min)
+                if parameter_info.max is not None:
+                    max_ = int(parameter_info.max)
+                return click.IntRange(min=min_, max=max_, clamp=parameter_info.clamp)
+            else:
+                return click.INT
+        elif annotation == float:
+            if parameter_info.min is not None or parameter_info.max is not None:
+                return click.FloatRange(
+                    min=parameter_info.min,
+                    max=parameter_info.max,
+                    clamp=parameter_info.clamp,
+                )
+            else:
+                return click.FLOAT
+        elif annotation == bool:
+            return click.BOOL
+        elif annotation == UUID:
+            return click.UUID
+        elif annotation == datetime:
+            return click.DateTime(formats=parameter_info.formats)
+        elif (
+            annotation == Path
+            or parameter_info.allow_dash
+            or parameter_info.path_type
+            or parameter_info.resolve_path
+        ):
+            return click.Path(
+                exists=parameter_info.exists,
+                file_okay=parameter_info.file_okay,
+                dir_okay=parameter_info.dir_okay,
+                writable=parameter_info.writable,
+                readable=parameter_info.readable,
+                resolve_path=parameter_info.resolve_path,
+                allow_dash=parameter_info.allow_dash,
+                path_type=parameter_info.path_type,
+            )
+        elif lenient_issubclass(annotation, FileTextWrite):
+            return click.File(
+                mode=parameter_info.mode or "w",
+                encoding=parameter_info.encoding,
+                errors=parameter_info.errors,
+                lazy=parameter_info.lazy,
+                atomic=parameter_info.atomic,
+            )
+        elif lenient_issubclass(annotation, FileText):
+            return click.File(
+                mode=parameter_info.mode or "r",
+                encoding=parameter_info.encoding,
+                errors=parameter_info.errors,
+                lazy=parameter_info.lazy,
+                atomic=parameter_info.atomic,
+            )
+        elif lenient_issubclass(annotation, FileBinaryRead):
+            return click.File(
+                mode=parameter_info.mode or "rb",
+                encoding=parameter_info.encoding,
+                errors=parameter_info.errors,
+                lazy=parameter_info.lazy,
+                atomic=parameter_info.atomic,
+            )
+        elif lenient_issubclass(annotation, FileBinaryWrite):
+            return click.File(
+                mode=parameter_info.mode or "wb",
+                encoding=parameter_info.encoding,
+                errors=parameter_info.errors,
+                lazy=parameter_info.lazy,
+                atomic=parameter_info.atomic,
+            )
+        elif lenient_issubclass(annotation, Enum):
+            return click.Choice(
+                [item.value for item in annotation],
+                case_sensitive=parameter_info.case_sensitive,
+            )
+>       raise RuntimeError(f"Type not yet supported: {annotation}")  # pragma no cover
+E       RuntimeError: Type not yet supported: ~T
+
+env/lib/python3.8/site-packages/typer/main.py:590: RuntimeError
+----------------------------- Captured stdout call -----------------------------
+/mnt/c/Users/avoronk/skills/tests/code/test_args.json
+________________________________ test_optimize _________________________________
+
+    def test_optimize():
+        study_name = "test_optimization"
+        num_trials = 1
+>       result = runner.invoke(
+            app,
+            [
+                "optimize",
+                f"--args-fp={args_fp}",
+                f"--study-name={study_name}",
+                f"--num-trials={num_trials}",
+            ],
+        )
+
+tests/code/test_main.py:47:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+env/lib/python3.8/site-packages/typer/testing.py:20: in invoke
+    use_cli = _get_command(app)
+env/lib/python3.8/site-packages/typer/main.py:232: in get_command
+    click_command = get_group(typer_instance)
+env/lib/python3.8/site-packages/typer/main.py:218: in get_group
+    group = get_group_from_info(TyperInfo(typer_instance))
+env/lib/python3.8/site-packages/typer/main.py:349: in get_group_from_info
+    command = get_command_from_info(command_info=command_info)
+env/lib/python3.8/site-packages/typer/main.py:425: in get_command_from_info
+    ) = get_params_convertors_ctx_param_name_from_function(command_info.callback)
+env/lib/python3.8/site-packages/typer/main.py:406: in get_params_convertors_ctx_param_name_from_function
+    click_param, convertor = get_click_param(param)
+env/lib/python3.8/site-packages/typer/main.py:659: in get_click_param
+    parameter_type = get_click_type(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def get_click_type(
+        *, annotation: Any, parameter_info: ParameterInfo
+    ) -> click.ParamType:
+        if annotation == str:
+            return click.STRING
+        elif annotation == int:
+            if parameter_info.min is not None or parameter_info.max is not None:
+                min_ = None
+                max_ = None
+                if parameter_info.min is not None:
+                    min_ = int(parameter_info.min)
+                if parameter_info.max is not None:
+                    max_ = int(parameter_info.max)
+                return click.IntRange(min=min_, max=max_, clamp=parameter_info.clamp)
+            else:
+                return click.INT
+        elif annotation == float:
+            if parameter_info.min is not None or parameter_info.max is not None:
+                return click.FloatRange(
+                    min=parameter_info.min,
+                    max=parameter_info.max,
+                    clamp=parameter_info.clamp,
+                )
+            else:
+                return click.FLOAT
+        elif annotation == bool:
+            return click.BOOL
+        elif annotation == UUID:
+            return click.UUID
+        elif annotation == datetime:
+            return click.DateTime(formats=parameter_info.formats)
+        elif (
+            annotation == Path
+            or parameter_info.allow_dash
+            or parameter_info.path_type
+            or parameter_info.resolve_path
+        ):
+            return click.Path(
+                exists=parameter_info.exists,
+                file_okay=parameter_info.file_okay,
+                dir_okay=parameter_info.dir_okay,
+                writable=parameter_info.writable,
+                readable=parameter_info.readable,
+                resolve_path=parameter_info.resolve_path,
+                allow_dash=parameter_info.allow_dash,
+                path_type=parameter_info.path_type,
+            )
+        elif lenient_issubclass(annotation, FileTextWrite):
+            return click.File(
+                mode=parameter_info.mode or "w",
+                encoding=parameter_info.encoding,
+                errors=parameter_info.errors,
+                lazy=parameter_info.lazy,
+                atomic=parameter_info.atomic,
+            )
+        elif lenient_issubclass(annotation, FileText):
+            return click.File(
+                mode=parameter_info.mode or "r",
+                encoding=parameter_info.encoding,
+                errors=parameter_info.errors,
+                lazy=parameter_info.lazy,
+                atomic=parameter_info.atomic,
+            )
+        elif lenient_issubclass(annotation, FileBinaryRead):
+            return click.File(
+                mode=parameter_info.mode or "rb",
+                encoding=parameter_info.encoding,
+                errors=parameter_info.errors,
+                lazy=parameter_info.lazy,
+                atomic=parameter_info.atomic,
+            )
+        elif lenient_issubclass(annotation, FileBinaryWrite):
+            return click.File(
+                mode=parameter_info.mode or "wb",
+                encoding=parameter_info.encoding,
+                errors=parameter_info.errors,
+                lazy=parameter_info.lazy,
+                atomic=parameter_info.atomic,
+            )
+        elif lenient_issubclass(annotation, Enum):
+            return click.Choice(
+                [item.value for item in annotation],
+                case_sensitive=parameter_info.case_sensitive,
+            )
+>       raise RuntimeError(f"Type not yet supported: {annotation}")  # pragma no cover
+E       RuntimeError: Type not yet supported: ~T
+
+env/lib/python3.8/site-packages/typer/main.py:590: RuntimeError
+_____________________________ test_load_artifacts ______________________________
+
+    def test_load_artifacts():
+        # run_id = open(Path(config.CONFIG_DIR, "run_id.txt")).read()
+        run_id = open(Path("run_id.txt")).read()
+>       artifacts = runner.invoke(app, ["load-artifacts", f"--run_id={run_id}"])
+
+tests/code/test_main.py:66:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+env/lib/python3.8/site-packages/typer/testing.py:20: in invoke
+    use_cli = _get_command(app)
+env/lib/python3.8/site-packages/typer/main.py:232: in get_command
+    click_command = get_group(typer_instance)
+env/lib/python3.8/site-packages/typer/main.py:218: in get_group
+    group = get_group_from_info(TyperInfo(typer_instance))
+env/lib/python3.8/site-packages/typer/main.py:349: in get_group_from_info
+    command = get_command_from_info(command_info=command_info)
+env/lib/python3.8/site-packages/typer/main.py:425: in get_command_from_info
+    ) = get_params_convertors_ctx_param_name_from_function(command_info.callback)
+env/lib/python3.8/site-packages/typer/main.py:406: in get_params_convertors_ctx_param_name_from_function
+    click_param, convertor = get_click_param(param)
+env/lib/python3.8/site-packages/typer/main.py:659: in get_click_param
+    parameter_type = get_click_type(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def get_click_type(
+        *, annotation: Any, parameter_info: ParameterInfo
+    ) -> click.ParamType:
+        if annotation == str:
+            return click.STRING
+        elif annotation == int:
+            if parameter_info.min is not None or parameter_info.max is not None:
+                min_ = None
+                max_ = None
+                if parameter_info.min is not None:
+                    min_ = int(parameter_info.min)
+                if parameter_info.max is not None:
+                    max_ = int(parameter_info.max)
+                return click.IntRange(min=min_, max=max_, clamp=parameter_info.clamp)
+            else:
+                return click.INT
+        elif annotation == float:
+            if parameter_info.min is not None or parameter_info.max is not None:
+                return click.FloatRange(
+                    min=parameter_info.min,
+                    max=parameter_info.max,
+                    clamp=parameter_info.clamp,
+                )
+            else:
+                return click.FLOAT
+        elif annotation == bool:
+            return click.BOOL
+        elif annotation == UUID:
+            return click.UUID
+        elif annotation == datetime:
+            return click.DateTime(formats=parameter_info.formats)
+        elif (
+            annotation == Path
+            or parameter_info.allow_dash
+            or parameter_info.path_type
+            or parameter_info.resolve_path
+        ):
+            return click.Path(
+                exists=parameter_info.exists,
+                file_okay=parameter_info.file_okay,
+                dir_okay=parameter_info.dir_okay,
+                writable=parameter_info.writable,
+                readable=parameter_info.readable,
+                resolve_path=parameter_info.resolve_path,
+                allow_dash=parameter_info.allow_dash,
+                path_type=parameter_info.path_type,
+            )
+        elif lenient_issubclass(annotation, FileTextWrite):
+            return click.File(
+                mode=parameter_info.mode or "w",
+                encoding=parameter_info.encoding,
+                errors=parameter_info.errors,
+                lazy=parameter_info.lazy,
+                atomic=parameter_info.atomic,
+            )
+        elif lenient_issubclass(annotation, FileText):
+            return click.File(
+                mode=parameter_info.mode or "r",
+                encoding=parameter_info.encoding,
+                errors=parameter_info.errors,
+                lazy=parameter_info.lazy,
+                atomic=parameter_info.atomic,
+            )
+        elif lenient_issubclass(annotation, FileBinaryRead):
+            return click.File(
+                mode=parameter_info.mode or "rb",
+                encoding=parameter_info.encoding,
+                errors=parameter_info.errors,
+                lazy=parameter_info.lazy,
+                atomic=parameter_info.atomic,
+            )
+        elif lenient_issubclass(annotation, FileBinaryWrite):
+            return click.File(
+                mode=parameter_info.mode or "wb",
+                encoding=parameter_info.encoding,
+                errors=parameter_info.errors,
+                lazy=parameter_info.lazy,
+                atomic=parameter_info.atomic,
+            )
+        elif lenient_issubclass(annotation, Enum):
+            return click.Choice(
+                [item.value for item in annotation],
+                case_sensitive=parameter_info.case_sensitive,
+            )
+>       raise RuntimeError(f"Type not yet supported: {annotation}")  # pragma no cover
+E       RuntimeError: Type not yet supported: ~T
+
+env/lib/python3.8/site-packages/typer/main.py:590: RuntimeError
+_________________________________ test_predict _________________________________
+
+    def test_predict():
+        text = "Transfer learning with transformers for text classification."
+>       result = runner.invoke(app, ["predict", f"--text={[text]}"])
+
+tests/code/test_main.py:72:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+env/lib/python3.8/site-packages/typer/testing.py:20: in invoke
+    use_cli = _get_command(app)
+env/lib/python3.8/site-packages/typer/main.py:232: in get_command
+    click_command = get_group(typer_instance)
+env/lib/python3.8/site-packages/typer/main.py:218: in get_group
+    group = get_group_from_info(TyperInfo(typer_instance))
+env/lib/python3.8/site-packages/typer/main.py:349: in get_group_from_info
+    command = get_command_from_info(command_info=command_info)
+env/lib/python3.8/site-packages/typer/main.py:425: in get_command_from_info
+    ) = get_params_convertors_ctx_param_name_from_function(command_info.callback)
+env/lib/python3.8/site-packages/typer/main.py:406: in get_params_convertors_ctx_param_name_from_function
+    click_param, convertor = get_click_param(param)
+env/lib/python3.8/site-packages/typer/main.py:659: in get_click_param
+    parameter_type = get_click_type(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def get_click_type(
+        *, annotation: Any, parameter_info: ParameterInfo
+    ) -> click.ParamType:
+        if annotation == str:
+            return click.STRING
+        elif annotation == int:
+            if parameter_info.min is not None or parameter_info.max is not None:
+                min_ = None
+                max_ = None
+                if parameter_info.min is not None:
+                    min_ = int(parameter_info.min)
+                if parameter_info.max is not None:
+                    max_ = int(parameter_info.max)
+                return click.IntRange(min=min_, max=max_, clamp=parameter_info.clamp)
+            else:
+                return click.INT
+        elif annotation == float:
+            if parameter_info.min is not None or parameter_info.max is not None:
+                return click.FloatRange(
+                    min=parameter_info.min,
+                    max=parameter_info.max,
+                    clamp=parameter_info.clamp,
+                )
+            else:
+                return click.FLOAT
+        elif annotation == bool:
+            return click.BOOL
+        elif annotation == UUID:
+            return click.UUID
+        elif annotation == datetime:
+            return click.DateTime(formats=parameter_info.formats)
+        elif (
+            annotation == Path
+            or parameter_info.allow_dash
+            or parameter_info.path_type
+            or parameter_info.resolve_path
+        ):
+            return click.Path(
+                exists=parameter_info.exists,
+                file_okay=parameter_info.file_okay,
+                dir_okay=parameter_info.dir_okay,
+                writable=parameter_info.writable,
+                readable=parameter_info.readable,
+                resolve_path=parameter_info.resolve_path,
+                allow_dash=parameter_info.allow_dash,
+                path_type=parameter_info.path_type,
+            )
+        elif lenient_issubclass(annotation, FileTextWrite):
+            return click.File(
+                mode=parameter_info.mode or "w",
+                encoding=parameter_info.encoding,
+                errors=parameter_info.errors,
+                lazy=parameter_info.lazy,
+                atomic=parameter_info.atomic,
+            )
+        elif lenient_issubclass(annotation, FileText):
+            return click.File(
+                mode=parameter_info.mode or "r",
+                encoding=parameter_info.encoding,
+                errors=parameter_info.errors,
+                lazy=parameter_info.lazy,
+                atomic=parameter_info.atomic,
+            )
+        elif lenient_issubclass(annotation, FileBinaryRead):
+            return click.File(
+                mode=parameter_info.mode or "rb",
+                encoding=parameter_info.encoding,
+                errors=parameter_info.errors,
+                lazy=parameter_info.lazy,
+                atomic=parameter_info.atomic,
+            )
+        elif lenient_issubclass(annotation, FileBinaryWrite):
+            return click.File(
+                mode=parameter_info.mode or "wb",
+                encoding=parameter_info.encoding,
+                errors=parameter_info.errors,
+                lazy=parameter_info.lazy,
+                atomic=parameter_info.atomic,
+            )
+        elif lenient_issubclass(annotation, Enum):
+            return click.Choice(
+                [item.value for item in annotation],
+                case_sensitive=parameter_info.case_sensitive,
+            )
+>       raise RuntimeError(f"Type not yet supported: {annotation}")  # pragma no cover
+E       RuntimeError: Type not yet supported: ~T
+
+env/lib/python3.8/site-packages/typer/main.py:590: RuntimeError
+=============================== warnings summary ===============================
+env/lib/python3.8/site-packages/sklearn/utils/multiclass.py:14
+  /mnt/c/Users/avoronk/skills/env/lib/python3.8/site-packages/sklearn/utils/multiclass.py:14: DeprecationWarning: Please use `spmatrix` from the `scipy.sparse` namespace, the `scipy.sparse.base` namespace is deprecated.
+    from scipy.sparse.base import spmatrix
+
+env/lib/python3.8/site-packages/mlflow/types/schema.py:47
+  /mnt/c/Users/avoronk/skills/env/lib/python3.8/site-packages/mlflow/types/schema.py:47: DeprecationWarning: `np.object` is a deprecated alias for the builtin `object`. To silence this warning, use `object` by itself. Doing this will not modify any behavior and is safe.
+  Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations
+    binary = (7, np.dtype("bytes"), "BinaryType", np.object)
+
+env/lib/python3.8/site-packages/sklearn/utils/optimize.py:18
+  /mnt/c/Users/avoronk/skills/env/lib/python3.8/site-packages/sklearn/utils/optimize.py:18: DeprecationWarning: Please use `line_search_wolfe2` from the `scipy.optimize` namespace, the `scipy.optimize.linesearch` namespace is deprecated.
+    from scipy.optimize.linesearch import line_search_wolfe2, line_search_wolfe1
+
+env/lib/python3.8/site-packages/sklearn/utils/optimize.py:18
+  /mnt/c/Users/avoronk/skills/env/lib/python3.8/site-packages/sklearn/utils/optimize.py:18: DeprecationWarning: Please use `line_search_wolfe1` from the `scipy.optimize` namespace, the `scipy.optimize.linesearch` namespace is deprecated.
+    from scipy.optimize.linesearch import line_search_wolfe2, line_search_wolfe1
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/code/test_main.py::test_train_model - RuntimeError: Type not yet...
+FAILED tests/code/test_main.py::test_optimize - RuntimeError: Type not yet su...
+FAILED tests/code/test_main.py::test_load_artifacts - RuntimeError: Type not ...
+FAILED tests/code/test_main.py::test_predict - RuntimeError: Type not yet sup...
+============= 4 failed, 6 passed, 4 warnings in 187.34s (0:03:07) ==============

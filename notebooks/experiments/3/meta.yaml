@@ -1,0 +1,4 @@
+artifact_location: file:///mnt/c/Users/avoronk/skills/notebooks/experiments/3
+experiment_id: '3'
+lifecycle_stage: active
+name: voting_clf

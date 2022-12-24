@@ -2,7 +2,7 @@ artifact_uri: file:///mnt/c/Users/avoronk/skills/notebooks/experiments/1/c783fb1
 end_time: 1658777323933
 entry_point_name: ''
 experiment_id: '1'
-lifecycle_stage: active
+lifecycle_stage: deleted
 name: ''
 run_id: c783fb1946d64e119605d9347f3f799c
 run_uuid: c783fb1946d64e119605d9347f3f799c

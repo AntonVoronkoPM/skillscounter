@@ -1,5 +1,11 @@
+import os
+import sys
+
+sys.path.append(os.path.join(os.path.dirname(__file__), "../"))
+
 import json
 import tempfile
+import warnings
 from argparse import Namespace
 from pathlib import Path
 from typing import Dict, List
@@ -7,52 +13,56 @@ from typing import Dict, List
 import joblib
 import mlflow
 import numpy as np
-import optuna
 import typer
-from numpyencoder import NumpyEncoder
-from optuna.integration.mlflow import MLflowCallback
+from hyperopt import Trials, fmin, hp, tpe
+from mlflow.entities import ViewType
+from mlflow.tracking import MlflowClient
 
 from config import config
 from config.config import logger
 from skillscounter import train, utils
 
-# from skillscounter.models import MongoAPI
+warnings.filterwarnings("ignore")
 
 # Initialize Typer CLI app
 app = typer.Typer()
 
 
 @app.command()
-def predict(text: List, run_id: str = None) -> np.ndarray:
+def predict(text, run_id: str = None) -> List:
     """Predict tag for text.
 
     Args:
-        text (pd.DataFrame): input text to predict label for.
+        text (List or str): input text to predict label for.
         run_id (str, optional): run id to load artifacts for prediction. Defaults to None.
     """
     if not run_id:
-        # run_id = open(Path(config.CONFIG_DIR, "run_id.txt")).read()
         run_id = open(Path("run_id.txt")).read()
     artifacts = load_artifacts(run_id=run_id)
 
-    x = artifacts["vectorizer"].transform(text)
-    y_pred = artifacts["model"].predict(x)
-    # predictions = [
-    #     {
-    #         "input_text": text,
-    #         "predicted_tag": y_pred[0],
-    #     }
-    # ]
+    logger.info(text)
 
-    # logger.info(predictions)
-    return y_pred
+    if type(text) == str:
+        text = [text]
+
+    logger.info(type(text))
+
+    y_pred = artifacts["model"].predict(text)
+    predictions = [
+        {
+            "input_text": text,
+            "predicted_tag": y_pred[0],
+        }
+    ]
+
+    logger.info(predictions)
+    return predictions
 
 
 @app.command()
 def train_model(
     args_fp: str = "config/args.json",
     experiment_name: str = "baselines",
-    run_name: str = "voter",
     test_run: bool = False,
 ) -> None:
     """Train a model given arguments.
@@ -60,7 +70,6 @@ def train_model(
     Args:
         args_fp (str): location of args.
         experiment_name (str): name of experiment.
-        run_name (str): name of specific run in experiment.
         test_run (bool, optional): If True, artifacts will not be saved. Defaults to False.
     """
     # Load labeled data
@@ -70,7 +79,7 @@ def train_model(
     # Train
     args = Namespace(**utils.load_dict(filepath=args_fp))
     mlflow.set_experiment(experiment_name=experiment_name)
-    with mlflow.start_run(run_name=run_name):
+    with mlflow.start_run():
         run_id = mlflow.active_run().info.run_id
         logger.info(f"Run ID: {run_id}")
         artifacts = train.train(df=df, args=args)
@@ -86,7 +95,6 @@ def train_model(
 
         # Log artifacts
         with tempfile.TemporaryDirectory() as dp:
-            joblib.dump(artifacts["vectorizer"], Path(dp, "vectorizer.pkl"))
             joblib.dump(artifacts["model"], Path(dp, "model.pkl"))
             utils.save_dict(performance, Path(dp, "performance.json"))
             mlflow.log_artifacts(dp)
@@ -100,7 +108,7 @@ def train_model(
 
 @app.command()
 def optimize(
-    args_fp: str = "config/args.json", study_name: str = "optimization", num_trials: int = 20
+    args_fp: str = "config/args.json", study_name: str = "optimization", num_trials: int = 50
 ) -> None:
     """Optimize hyperparameters.
 
@@ -109,28 +117,54 @@ def optimize(
         study_name (str): name of optimization study.
         num_trials (int): number of trials to run in study.
     """
-    # Load labeled data
-    projects_fp = Path(config.DATA_DIR, "full_dataset.csv")
-    df = utils.load_frames(filepath=projects_fp)
 
     # Optimize
-    args = Namespace(**utils.load_dict(filepath=args_fp))
-    pruner = optuna.pruners.MedianPruner(n_startup_trials=5, n_warmup_steps=5)
-    study = optuna.create_study(study_name=study_name, direction="maximize", pruner=pruner)
-    mlflow_callback = MLflowCallback(tracking_uri=mlflow.get_tracking_uri(), metric_name="f1")
-    study.optimize(
-        lambda trial: train.objective(args, df, trial),
-        n_trials=num_trials,
-        callbacks=[mlflow_callback],
+    mlflow.set_experiment(study_name)
+    search_space = hp.choice(
+        "classifier_type",
+        [
+            {
+                "type": "svm",
+                "C": hp.lognormal("SVM_C", 0, 1.0),
+            },
+            {
+                "type": "logreg",
+                "C": hp.lognormal("LR_C", 0, 1.0),
+                "solver": hp.choice("solver", ["liblinear", "lbfgs"]),
+            },
+        ],
+    )
+
+    rstate = np.random.default_rng(42)  # for reproducible results
+    fmin(
+        fn=train.objective,
+        space=search_space,
+        algo=tpe.suggest,
+        max_evals=num_trials,
+        trials=Trials(),
+        rstate=rstate,
     )
 
     # Best trial
-    trials_df = study.trials_dataframe()
-    trials_df = trials_df.sort_values(["user_attrs_f1"], ascending=False)
-    # args = {**args.__dict__, **study.best_trial.params}
-    utils.save_dict({**args.__dict__, **study.best_trial.params}, args_fp, cls=NumpyEncoder)
-    logger.info(f"\nBest value (f1): {study.best_trial.value}")
-    logger.info(f"Best hyperparameters: {json.dumps(study.best_trial.params, indent=2)}")
+    client = MlflowClient()
+
+    experiment = client.get_experiment_by_name(study_name)
+    run = client.search_runs(
+        experiment_ids=experiment.experiment_id,
+        filter_string="metrics.accuracy > .8",
+        run_view_type=ViewType.ACTIVE_ONLY,
+        order_by=["metrics.accuracy DESC"],
+    )[0]
+
+    # register the best model
+    # mlflow.register_model( ... )
+
+    if "C" in run.data.params:
+        run.data.params["C"] = float(run.data.params["C"])
+
+    utils.save_dict({**run.data.params, **run.data.metrics}, args_fp)
+    logger.info(f"\nBest value (accuracy): {run.data.metrics['accuracy']:.4f}")
+    logger.info(f"Best hyperparameters: {json.dumps(run.data.params, indent=2)}")
 
 
 @app.command()
@@ -149,11 +183,10 @@ def load_artifacts(run_id: str = None) -> Dict:
 
     # Load objects from run
     args = Namespace(**utils.load_dict(filepath=Path("config/args.json")))
-    vectorizer = joblib.load(Path(artifacts_dir, "vectorizer.pkl"))
     model = joblib.load(Path(artifacts_dir, "model.pkl"))
     performance = utils.load_dict(filepath=Path("config/performance.json"))
 
-    return {"args": args, "vectorizer": vectorizer, "model": model, "performance": performance}
+    return {"args": args, "model": model, "performance": performance}
 
 
 # def classifier():

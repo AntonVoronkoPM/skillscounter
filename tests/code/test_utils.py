@@ -18,12 +18,12 @@ def test_json_to_dataframe():
 
 
 def test_load_json_from_url():
-    tags_url = "https://raw.githubusercontent.com/GokuMohandas/MadeWithML/main/datasets/tags.json"
+    tags_url = "https://raw.githubusercontent.com/AntonVoronkoPM/skillscounter/main/tests/code/7-14-20-raw.json"
     tags_dict = {}
     for item in utils.load_json_from_url(url=tags_url):
-        key = item.pop("tag")
+        key = item.pop("title")
         tags_dict[key] = item
-    assert "natural-language-processing" in tags_dict
+    assert "Front End Web Developer" in tags_dict
 
 
 def test_load_frames():

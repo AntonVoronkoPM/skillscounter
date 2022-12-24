@@ -1,8 +1,5 @@
 {
-  "analyzer": "char",
-  "ngram_max_range": 8,
-  "loss": "hinge",
-  "tol": 0.6009681353174042,
-  "C": 1.9079795844377698,
-  "solver": "sag"
+  "C": 0.2598289599943203,
+  "model": "LinearSVC",
+  "accuracy": 0.9213665822276775
 }

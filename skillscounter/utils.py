@@ -36,6 +36,8 @@ def load_json_from_url(url: str) -> Dict:
         Dict: loaded JSON data.
     """
     data = json.loads(urlopen(url).read())
+
+    print(data)
     return data
 
 
